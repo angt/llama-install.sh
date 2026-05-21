@@ -1,0 +1,74 @@
+name: Build any rocm
+
+on:
+  workflow_call:
+    inputs: &common_inputs
+      filter:
+        type: string
+        default: 'rocm'
+      deploy:
+        type: boolean
+      llamacpp_repo:
+        type: string
+      llamacpp_version:
+        type: string
+      boringssl_repo:
+        type: string
+      boringssl_version:
+        type: string
+
+  workflow_dispatch:
+    inputs: *common_inputs
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Cleanup
+        run: |
+          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /opt/microsoft
+          sudo rm -rf /opt/az
+          sudo rm -rf /opt/pipx
+          sudo rm -rf /opt/google
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /usr/share/miniconda
+          sudo rm -rf /usr/lib/jvm
+          sudo rm -rf /usr/lib/google-cloud-sdk
+          sudo rm -rf /usr/lib/llvm-*
+          sudo rm -rf /usr/lib/mono
+          sudo rm -rf /usr/lib/heroku
+          sudo docker system prune --all --force
+
+      - name: Install deps
+        run: |
+          sudo wget -qO /etc/apt/trusted.gpg.d/rocm.asc "https://repo.radeon.com/rocm/rocm.gpg.key"
+          sudo tee /etc/apt/sources.list.d/rocm.list <<EOF
+          deb https://repo.radeon.com/rocm/apt/7.0.3 jammy main
+          EOF
+          sudo tee /etc/apt/preferences.d/rocm-pin <<EOF
+          Package: *
+          Pin: release o=repo.radeon.com
+          Pin-Priority: 600
+          EOF
+          sudo apt-get update -y
+          sudo apt-get install -y --no-install-recommends rocm-hip-sdk
+
+      - name: Build ${{ inputs.filter }}
+        env:
+          LLAMACPP_REPO: ${{ inputs.llamacpp_repo }}
+          LLAMACPP_VERSION: ${{ inputs.llamacpp_version }}
+          BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
+          BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
+        run: cmake -DFILTER=${{ inputs.filter }} -P build.cmake
+
+      - name: Deploy
+        if: ${{ inputs.deploy && vars.HF_REPO != '' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          pip install -U "hf[hf_xet]"
+          python scripts/upload.py ${{ vars.HF_REPO }}/${{ inputs.llamacpp_version || 'test' }}

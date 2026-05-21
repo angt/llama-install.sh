@@ -1,0 +1,50 @@
+name: Build any cuda
+
+on:
+  workflow_call:
+    inputs: &common_inputs
+      filter:
+        type: string
+        default: 'x86_64-linux-cuda'
+      deploy:
+        type: boolean
+      llamacpp_repo:
+        type: string
+      llamacpp_version:
+        type: string
+      boringssl_repo:
+        type: string
+      boringssl_version:
+        type: string
+
+  workflow_dispatch:
+    inputs: *common_inputs
+
+jobs:
+  build:
+    runs-on: ${{ startsWith(inputs.filter, 'aarch64-') && 'ubuntu-22.04-arm' || 'ubuntu-22.04' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install deps
+        run: |
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 100
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 100
+          python scripts/install-cuda.py
+          echo "$GITHUB_WORKSPACE/deps/cuda/bin" >> $GITHUB_PATH
+
+      - name: Build ${{ inputs.filter }}
+        env:
+          LLAMACPP_REPO: ${{ inputs.llamacpp_repo }}
+          LLAMACPP_VERSION: ${{ inputs.llamacpp_version }}
+          BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
+          BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
+        run: cmake -DFILTER=${{ inputs.filter }} -P build.cmake
+
+      - name: Deploy
+        if: ${{ inputs.deploy && vars.HF_REPO != '' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          pip install -U "hf[hf_xet]"
+          python scripts/upload.py ${{ vars.HF_REPO }}/${{ inputs.llamacpp_version || 'test' }}
