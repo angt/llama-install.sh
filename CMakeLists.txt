@@ -5,7 +5,7 @@ find_program(ZSTD zstd REQUIRED)
 
 include(FetchContent)
 
-macro(FetchDep NAME DEFAULT_REPO DEFAULT_VERSION)
+function(FetchDep NAME DEFAULT_REPO DEFAULT_VERSION)
     string(TOUPPER ${NAME} NAME_UPPER)
 
     if(NOT "$ENV{${NAME_UPPER}_REPO}" STREQUAL "")
@@ -32,7 +32,7 @@ macro(FetchDep NAME DEFAULT_REPO DEFAULT_VERSION)
             ${ARGN}
         )
     endif()
-endmacro()
+endfunction()
 
 FetchDep(boringssl
     "https://boringssl.googlesource.com/boringssl"
