@@ -102,7 +102,7 @@ main() {
 
 	[ "$HOME" ] || die "No HOME, please check your OS"
 
-	VERSION=$(curl -fsSL "$REPO/latest")
+	[ "$VERSION" ] || VERSION=$(curl -fsSL "$REPO/latest")
 	[ "$VERSION" ] || die "No version found"
 	printf "Version: %s\n" "$VERSION"
 
