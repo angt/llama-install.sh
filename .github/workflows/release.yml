@@ -542,11 +542,56 @@ jobs:
           python scripts/upload.py ${{ vars.HF_REPO }}/${{ needs.init.outputs.llamacpp_version }}
           rm -rf output
 
+  test:
+    name: Test (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    needs:
+      - init
+      - release
+    if: ${{ vars.HF_REPO != '' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            runner: ubuntu-latest
+            install: sh install.sh
+            llama: ~/.llama-app/llama
+
+          - platform: windows
+            runner: windows-latest
+            install: pwsh install.ps1
+            llama: llama.exe
+
+          - platform: macos
+            runner: macos-latest
+            install: sh install.sh
+            llama: ~/.llama-app/llama
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install
+        env:
+          VERSION: ${{ needs.init.outputs.llamacpp_version }}
+        run: ${{ matrix.install }}
+
+      - name: Test
+        run: ${{ matrix.llama }} bench -hf ggml-org/test-model-stories260K
+
+  latest:
+    runs-on: ubuntu-latest
+    needs:
+      - init
+      - test
+    if: ${{ vars.HF_REPO != '' && needs.init.outputs.write_latest == 'true' }}
+    steps:
+      - uses: actions/checkout@v5
+
       - name: Write latest file
-        if: ${{ vars.HF_REPO != '' && needs.init.outputs.write_latest == 'true' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
+          pip install -U "hf[hf_xet]"
           mkdir output
           printf "${{ needs.init.outputs.llamacpp_version }}" > output/latest
           python scripts/upload.py ${{ vars.HF_REPO }}

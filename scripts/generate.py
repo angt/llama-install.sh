@@ -604,16 +604,14 @@ def main():
     with open(release_path, "r", encoding="utf-8") as f:
         release = yaml.load(f)
 
-    init_job = release["jobs"]["init"]
     release_job = release["jobs"]["release"]
-
     build_jobs = generate_jobs(data.get("workflowPresets", []))
     release_job["needs"] = ["init"] + list(build_jobs.keys())
 
     release["jobs"] = {
-        "init": init_job,
+        **release["jobs"],
         **build_jobs,
-        "release": release_job
+        "release": release_job,
     }
     with open(release_path, "w", encoding="utf-8") as f:
         yaml.dump(release, f)
