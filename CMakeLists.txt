@@ -17,6 +17,7 @@ macro(FetchDep NAME DEFAULT_REPO DEFAULT_VERSION)
         set(DEFAULT_VERSION "$ENV{${NAME_UPPER}_VERSION}")
     endif()
     set(${NAME_UPPER}_VERSION "${DEFAULT_VERSION}" CACHE STRING "${NAME} version")
+    message(STATUS "${NAME} version: ${${NAME_UPPER}_VERSION}")
 
     if(EXISTS "${CMAKE_SOURCE_DIR}/deps/${NAME}/CMakeLists.txt")
         FetchContent_Declare(${NAME}
