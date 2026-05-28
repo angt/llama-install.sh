@@ -61,6 +61,24 @@ set(LLAMA_BUILD_TOOLS     ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_SERVER    ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_APP       ON  CACHE BOOL "" FORCE)
 
+# LibreSSL is supported as an alternative SSL backend in this cross Zig
+# pipeline. It needs a few knobs to build cleanly when selected with
+# -DLLAMA_BUILD_LIBRESSL=ON -DLLAMA_BUILD_BORINGSSL=OFF.
+if(LLAMA_BUILD_LIBRESSL)
+    # Zig clang in cross mode to x86_64-windows-gnu exposes glibc symbols
+    # (syslog, getentropy, ...) that LibreSSL's check_function_exists picks up
+    # as available but that fail to compile because the mingw headers do not
+    # declare them. Pin these probes to FALSE so the compat layer keeps its
+    # Windows fallbacks.
+    set(HAVE_GETENTROPY FALSE CACHE INTERNAL "")
+    set(HAVE_SYSLOG     FALSE CACHE INTERNAL "")
+
+    # LibreSSL ships mingw64 perlasm output that uses COFF directives like
+    # .def / .scl / .endef which the Zig clang assembler does not understand.
+    # Disable the assembly path so the C fallback is used in this cross compile.
+    set(ENABLE_ASM OFF CACHE BOOL "" FORCE)
+endif()
+
 #add_compile_options(
 #    -ffp-model=fast
 #    -fno-finite-math-only
