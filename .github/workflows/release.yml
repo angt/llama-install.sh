@@ -543,40 +543,13 @@ jobs:
           rm -rf output
 
   test:
-    name: Test (${{ matrix.platform }})
-    runs-on: ${{ matrix.runner }}
     needs:
       - init
       - release
     if: ${{ vars.HF_REPO != '' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: linux
-            runner: ubuntu-latest
-            install: sh install.sh
-            llama: ~/.llama-app/llama
-
-          - platform: windows
-            runner: windows-latest
-            install: pwsh install.ps1
-            llama: llama.exe
-
-          - platform: macos
-            runner: macos-latest
-            install: sh install.sh
-            llama: ~/.llama-app/llama
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Install
-        env:
-          VERSION: ${{ needs.init.outputs.llamacpp_version }}
-        run: ${{ matrix.install }}
-
-      - name: Test
-        run: ${{ matrix.llama }} bench -hf ggml-org/test-model-stories260K
+    uses: ./.github/workflows/test-release.yml
+    with:
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
 
   latest:
     runs-on: ubuntu-latest

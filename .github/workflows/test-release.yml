@@ -1,0 +1,46 @@
+name: Test release
+
+on:
+  workflow_dispatch:
+    inputs:
+      llamacpp_version:
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      llamacpp_version:
+        required: true
+        type: string
+
+jobs:
+  test:
+    name: Test (${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            runner: ubuntu-latest
+            install: sh install.sh
+            llama: ~/.llama-app/llama
+
+          - platform: windows
+            runner: windows-latest
+            install: pwsh install.ps1
+            llama: llama.exe
+
+          - platform: macos
+            runner: macos-latest
+            install: sh install.sh
+            llama: ~/.llama-app/llama
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install
+        env:
+          VERSION: ${{ inputs.llamacpp_version }}
+        run: ${{ matrix.install }}
+
+      - name: Test
+        run: ${{ matrix.llama }} bench -hf ggml-org/test-model-stories260K
