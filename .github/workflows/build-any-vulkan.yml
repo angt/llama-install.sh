@@ -24,8 +24,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      ZIG_VERSION: "0.17.0-dev.263+0add2dfc4"
-      VULKAN_VERSION: "1.4.341.1"
+      ZIG_VERSION: "0.17.0-dev.389+f5a1968f6"
+      VULKAN_VERSION: "1.4.350.1"
 
     steps:
       - uses: actions/checkout@v5
