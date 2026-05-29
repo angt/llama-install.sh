@@ -1,4 +1,5 @@
-REPO="https://huggingface.co/buckets/ggml-org/install.sh/resolve"
+[ "$LLAMA_BUCKET" ] || LLAMA_BUCKET="ggml-org/install.sh"
+REPO="https://huggingface.co/buckets/$LLAMA_BUCKET/resolve"
 
 die() {
 	printf "%s\n" "$@" >&2
@@ -21,8 +22,8 @@ dl_bin() {
 	check_bin curl || die "Please install curl"
 	printf "Downloading %s...\n" "$1"
 	case "$2" in
-	(*.zst) curl -fsSL "$REPO/$VERSION/$2" | unzstd ;;
-	(*)     curl -fsSL "$REPO/$VERSION/$2" ;;
+	(*.zst) curl -fsSL "$REPO/$LLAMA_VERSION/$2" | unzstd ;;
+	(*)     curl -fsSL "$REPO/$LLAMA_VERSION/$2" ;;
 	esac > "$1.tmp" 2>/dev/null &&
 	chmod +x "$1.tmp" && mv "$1.tmp" "$1" && return
 	printf "Failed to download\n" >&2
@@ -92,9 +93,9 @@ main() {
 
 	[ "$HOME" ] || die "No HOME, please check your OS"
 
-	[ "$VERSION" ] || VERSION=$(curl -fsSL "$REPO/latest")
-	[ "$VERSION" ] || die "No version found"
-	printf "Version: %s\n" "$VERSION"
+	[ "$LLAMA_VERSION" ] || LLAMA_VERSION=$(curl -fsSL "$REPO/latest")
+	[ "$LLAMA_VERSION" ] || die "No version found"
+	printf "Version: %s\n" "$LLAMA_VERSION"
 
 	(
 		rm -rf ~/.llama-app
