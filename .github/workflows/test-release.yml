@@ -1,15 +1,18 @@
 name: Test release
 
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       llamacpp_version:
-        required: true
+        required: false
+        default: ''
         type: string
   workflow_call:
     inputs:
       llamacpp_version:
-        required: true
+        required: false
+        default: ''
         type: string
 
 jobs:
