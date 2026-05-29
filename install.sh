@@ -179,4 +179,4 @@ main() {
 	EOF
 }
 
-main "$@"
+#main "$@"
