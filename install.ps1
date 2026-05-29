@@ -1,4 +1,6 @@
-$REPO = "https://huggingface.co/buckets/ggml-org/install.sh/resolve"
+if (!$LLAMA_BUCKET) { $LLAMA_BUCKET = $env:LLAMA_BUCKET }
+if (!$LLAMA_BUCKET) { $LLAMA_BUCKET = "ggml-org/install.sh" }
+$REPO = "https://huggingface.co/buckets/$LLAMA_BUCKET/resolve"
 
 function Die {
     param([string[]]$Messages)
@@ -15,11 +17,11 @@ function Download {
     try {
         if ($URL -like "*.zst") {
             Download "unzstd.exe" "$ARCH/windows/unzstd.exe"
-            Invoke-RestMethod "$REPO/$VERSION/$URL" -OutFile "$DIR\tmp.zst"
+            Invoke-RestMethod "$REPO/$LLAMA_VERSION/$URL" -OutFile "$DIR\tmp.zst"
             Start-Process -FilePath "$DIR\unzstd.exe" -RedirectStandardInput "$DIR\tmp.zst" -RedirectStandardOutput "$DIR\$FILE" -NoNewWindow -Wait
             Remove-Item "$DIR\tmp.zst"
         } else {
-            Invoke-RestMethod "$REPO/$VERSION/$URL" -OutFile "$DIR\$FILE"
+            Invoke-RestMethod "$REPO/$LLAMA_VERSION/$URL" -OutFile "$DIR\$FILE"
         }
     } catch {
         Die "Failed to download"
@@ -53,10 +55,10 @@ function Main {
         default { Die "Arch not supported" }
     }
 
-    if (!$VERSION) { $VERSION = $env:VERSION }
-    if (!$VERSION) { $VERSION = Invoke-RestMethod "$REPO/latest" }
-    if (!$VERSION) { Die "No version found" }
-    "Version: $VERSION"
+    if (!$LLAMA_VERSION) { $LLAMA_VERSION = $env:LLAMA_VERSION }
+    if (!$LLAMA_VERSION) { $LLAMA_VERSION = Invoke-RestMethod "$REPO/latest" }
+    if (!$LLAMA_VERSION) { Die "No version found" }
+    "Version: $LLAMA_VERSION"
 
     $INSTALL_DIR = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps"
     $DIR = Join-Path $env:TEMP "llama-app-tmp"

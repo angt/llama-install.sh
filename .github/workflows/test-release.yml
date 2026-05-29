@@ -42,7 +42,8 @@ jobs:
 
       - name: Install
         env:
-          VERSION: ${{ inputs.llamacpp_version }}
+          LLAMA_BUCKET: ${{ vars.HF_REPO }}
+          LLAMA_VERSION: ${{ inputs.llamacpp_version }}
         run: ${{ matrix.install }}
 
       - name: Test
