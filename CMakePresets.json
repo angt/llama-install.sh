@@ -3321,6 +3321,23 @@
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
+    },
+    {
+      "name": "aarch64-macos-metal-a18",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/aarch64/macos/metal/a18",
+        "LLAMA_INSTALL_OS": "macos",
+        "LLAMA_INSTALL_ARCH": "aarch64",
+        "GGML_METAL": "ON",
+        "GGML_METAL_EMBED_LIBRARY": "ON",
+        "GGML_METAL_USE_BF16": "ON",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "15.0",
+        "LLAMA_INSTALL_FLAGS": "-mcpu=apple-a18"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
     }
   ],
   "buildPresets": [
@@ -5415,6 +5432,14 @@
     {
       "name": "aarch64-macos-metal-m5",
       "configurePreset": "aarch64-macos-metal-m5",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "aarch64-macos-metal-a18",
+      "configurePreset": "aarch64-macos-metal-a18",
       "jobs": 0,
       "targets": [
         "llama-install"
@@ -8825,6 +8850,19 @@
         {
           "type": "build",
           "name": "aarch64-macos-metal-m5"
+        }
+      ]
+    },
+    {
+      "name": "aarch64-macos-metal-a18",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "aarch64-macos-metal-a18"
+        },
+        {
+          "type": "build",
+          "name": "aarch64-macos-metal-a18"
         }
       ]
     }
