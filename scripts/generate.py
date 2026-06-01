@@ -56,7 +56,15 @@ ROCM_ARCHS = [
     "1102", "1151", "1200", "1201"
 ]
 CUDA_ARCHS = ["75", "80", "86", "89", "90", "100", "120"]
-METAL_ARCHS = {1: "13.3", 2: "13.3", 3: "14.0", 4: "15.0", 5: "16.0"}
+METAL_ARCHS = {
+    "m1":  ("13.3", False, None),
+    "m2":  ("13.3", False, None),
+    "m3":  ("14.0", True,  None),
+    "m4":  ("15.0", True,  None),
+    "m5":  ("16.0", True,  "m4"),
+    "a18": ("15.0", True,  None),
+}
+
 CPU_ARCHS = {}
 
 def generate_features(features, implications):
@@ -392,20 +400,17 @@ def generate_vulkan_probe_preset(os_name, arch):
         configs   = configs,
     )
 
-def metal_use_bf16(cpu):
-    return cpu >= 3
-
 def generate_metal_presets():
     configs = []
-    for cpu, osx in METAL_ARCHS.items():
-        name = f"m{cpu}"
+    for name, (osx, bf16, mcpu_override) in METAL_ARCHS.items():
+        mcpu = f"apple-{mcpu_override or name}"
         cache = {
             "GGML_METAL": "ON",
             "GGML_METAL_EMBED_LIBRARY": "ON",
-            "GGML_METAL_USE_BF16": "ON" if metal_use_bf16(cpu) else "OFF",
+            "GGML_METAL_USE_BF16": "ON" if bf16 else "OFF",
             "CMAKE_OSX_ARCHITECTURES": "arm64",
             "CMAKE_OSX_DEPLOYMENT_TARGET": osx,
-            "LLAMA_INSTALL_FLAGS": f"-mcpu=apple-m{min(4, cpu)}" # TODO m5
+            "LLAMA_INSTALL_FLAGS": f"-mcpu={mcpu}"
         }
         configs.append((name, cache))
 
@@ -487,8 +492,8 @@ def generate_report():
         ]),
         "### Metal (Apple Silicon)",
         make_table(["Suffix", "Architecture", "Features"], [
-            [f"`m{cpu}`", f"Apple M{cpu}", "BF16" if metal_use_bf16(cpu) else "-"]
-            for cpu, _ in METAL_ARCHS.items()
+            [f"`{cpu}`", f"Apple {cpu.upper()}", "BF16" if bf16 else "-"]
+            for cpu, (_, bf16, _) in METAL_ARCHS.items()
         ]),
     ])
 
