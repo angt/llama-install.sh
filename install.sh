@@ -69,10 +69,18 @@ probe_cpu() {
 	dl_bin llama "$ARCH/$OS/cpu/$CONFIG/llama-app.zst"
 }
 
+probe_metal_cpu() {
+	read -r apple cpu _
+	[ "$apple" = Apple ] &&
+	case "$cpu" in
+	(M[12345]|A18) echo "$cpu" | tr '[:upper:]' '[:lower:]' ;;
+	(*) return 1 ;;
+	esac
+}
+
 probe_metal() {
 	printf "Probing Metal...\n" &&
-	CONFIG=$(sysctl -n machdep.cpu.brand_string | grep -o "Apple M[1-5]") 2>/dev/null &&
-	CONFIG=m${CONFIG##*M} &&
+	CONFIG=$(sysctl -n machdep.cpu.brand_string 2>/dev/null | probe_metal_cpu) &&
 	printf "Found: %s\n" "$CONFIG" &&
 	dl_bin llama "$ARCH/$OS/metal/$CONFIG/llama-app.zst"
 }
