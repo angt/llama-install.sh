@@ -162,8 +162,6 @@ def main():
         if sys.argv[1].startswith('hf://'):
             local_dir = "reqs"
             sync_bucket(sys.argv[1], local_dir)
-            with open(os.path.join(local_dir, "latest")) as f:
-                local_dir = os.path.join(local_dir, f.read().strip())
         else:
             local_dir = sys.argv[1]
     else:
