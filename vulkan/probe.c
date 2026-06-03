@@ -1,9 +1,27 @@
 #include <stdlib.h>
 #include <vulkan/vulkan.h>
 
+#ifdef __linux__
+#include <math.h>
+
+extern long copy_file_range(int, long *, int, long *, long, unsigned);
+
+static long _probe_glibc_floor(void)
+{
+    volatile float x = 2;
+    long zero = 0;
+    return copy_file_range(-1, &zero, -1, &zero, 0, 0) + powf(x, x);
+}
+#endif
+
 int
 main(void)
 {
+#ifdef __linux__
+    if (getenv("_probe_glibc_floor"))
+        _probe_glibc_floor();
+#endif
+
     VkInstanceCreateInfo createInfo = {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
     };
