@@ -1,4 +1,4 @@
-import json
+import json, re
 from urllib.request import urlopen
 from pathlib import Path
 from ruamel.yaml import YAML
@@ -10,6 +10,9 @@ with urlopen("https://ziglang.org/download/index.json") as r:
 
 with urlopen("https://vulkan.lunarg.com/sdk/latest/linux.txt") as r:
     updates["VULKAN_VERSION"] = r.read().decode().strip()
+
+with urlopen("https://rocm.nightlies.amd.com/whl-multi-arch/rocm/") as r:
+    updates["ROCM_VERSION"] = sorted(re.findall(r'rocm-(\d+\.\d+\.\d+a\d+)\.tar\.gz', r.read().decode()))[-1]
 
 for key, value in updates.items():
     print(f" - {key}: {value}")

@@ -3002,34 +3002,6 @@
       "generator": "Ninja"
     },
     {
-      "name": "x86_64-linux-rocm-gfx803",
-      "binaryDir": "build/${presetName}",
-      "cacheVariables": {
-        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx803",
-        "LLAMA_INSTALL_OS": "linux",
-        "LLAMA_INSTALL_ARCH": "x86_64",
-        "GGML_HIP": "ON",
-        "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx803"
-      },
-      "toolchainFile": "toolchains/rocm.cmake",
-      "generator": "Ninja"
-    },
-    {
-      "name": "x86_64-linux-rocm-gfx900",
-      "binaryDir": "build/${presetName}",
-      "cacheVariables": {
-        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx900",
-        "LLAMA_INSTALL_OS": "linux",
-        "LLAMA_INSTALL_ARCH": "x86_64",
-        "GGML_HIP": "ON",
-        "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx900"
-      },
-      "toolchainFile": "toolchains/rocm.cmake",
-      "generator": "Ninja"
-    },
-    {
       "name": "x86_64-linux-rocm-gfx906",
       "binaryDir": "build/${presetName}",
       "cacheVariables": {
@@ -3039,20 +3011,6 @@
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
         "CMAKE_HIP_ARCHITECTURES": "gfx906"
-      },
-      "toolchainFile": "toolchains/rocm.cmake",
-      "generator": "Ninja"
-    },
-    {
-      "name": "x86_64-linux-rocm-gfx908",
-      "binaryDir": "build/${presetName}",
-      "cacheVariables": {
-        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx908",
-        "LLAMA_INSTALL_OS": "linux",
-        "LLAMA_INSTALL_ARCH": "x86_64",
-        "GGML_HIP": "ON",
-        "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx908"
       },
       "toolchainFile": "toolchains/rocm.cmake",
       "generator": "Ninja"
@@ -3086,29 +3044,15 @@
       "generator": "Ninja"
     },
     {
-      "name": "x86_64-linux-rocm-gfx1010",
+      "name": "x86_64-linux-rocm-gfx950",
       "binaryDir": "build/${presetName}",
       "cacheVariables": {
-        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx1010",
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx950",
         "LLAMA_INSTALL_OS": "linux",
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
-        "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1010"
-      },
-      "toolchainFile": "toolchains/rocm.cmake",
-      "generator": "Ninja"
-    },
-    {
-      "name": "x86_64-linux-rocm-gfx1011",
-      "binaryDir": "build/${presetName}",
-      "cacheVariables": {
-        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx1011",
-        "LLAMA_INSTALL_OS": "linux",
-        "LLAMA_INSTALL_ARCH": "x86_64",
-        "GGML_HIP": "ON",
-        "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1011"
+        "GGML_HIP_ROCWMMA_FATTN": "ON",
+        "CMAKE_HIP_ARCHITECTURES": "gfx950"
       },
       "toolchainFile": "toolchains/rocm.cmake",
       "generator": "Ninja"
@@ -3128,6 +3072,20 @@
       "generator": "Ninja"
     },
     {
+      "name": "x86_64-linux-rocm-gfx1031",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx1031",
+        "LLAMA_INSTALL_OS": "linux",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_HIP": "ON",
+        "GGML_HIP_ROCWMMA_FATTN": "OFF",
+        "CMAKE_HIP_ARCHITECTURES": "gfx1031"
+      },
+      "toolchainFile": "toolchains/rocm.cmake",
+      "generator": "Ninja"
+    },
+    {
       "name": "x86_64-linux-rocm-gfx1032",
       "binaryDir": "build/${presetName}",
       "cacheVariables": {
@@ -3137,6 +3095,20 @@
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
         "CMAKE_HIP_ARCHITECTURES": "gfx1032"
+      },
+      "toolchainFile": "toolchains/rocm.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1011",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx1011",
+        "LLAMA_INSTALL_OS": "linux",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_HIP": "ON",
+        "GGML_HIP_ROCWMMA_FATTN": "OFF",
+        "CMAKE_HIP_ARCHITECTURES": "gfx1011"
       },
       "toolchainFile": "toolchains/rocm.cmake",
       "generator": "Ninja"
@@ -3184,6 +3156,34 @@
       "generator": "Ninja"
     },
     {
+      "name": "x86_64-linux-rocm-gfx1103",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx1103",
+        "LLAMA_INSTALL_OS": "linux",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_HIP": "ON",
+        "GGML_HIP_ROCWMMA_FATTN": "ON",
+        "CMAKE_HIP_ARCHITECTURES": "gfx1103"
+      },
+      "toolchainFile": "toolchains/rocm.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1150",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx1150",
+        "LLAMA_INSTALL_OS": "linux",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_HIP": "ON",
+        "GGML_HIP_ROCWMMA_FATTN": "ON",
+        "CMAKE_HIP_ARCHITECTURES": "gfx1150"
+      },
+      "toolchainFile": "toolchains/rocm.cmake",
+      "generator": "Ninja"
+    },
+    {
       "name": "x86_64-linux-rocm-gfx1151",
       "binaryDir": "build/${presetName}",
       "cacheVariables": {
@@ -3193,6 +3193,34 @@
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
         "CMAKE_HIP_ARCHITECTURES": "gfx1151"
+      },
+      "toolchainFile": "toolchains/rocm.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1152",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx1152",
+        "LLAMA_INSTALL_OS": "linux",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_HIP": "ON",
+        "GGML_HIP_ROCWMMA_FATTN": "ON",
+        "CMAKE_HIP_ARCHITECTURES": "gfx1152"
+      },
+      "toolchainFile": "toolchains/rocm.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1153",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/gfx1153",
+        "LLAMA_INSTALL_OS": "linux",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_HIP": "ON",
+        "GGML_HIP_ROCWMMA_FATTN": "ON",
+        "CMAKE_HIP_ARCHITECTURES": "gfx1153"
       },
       "toolchainFile": "toolchains/rocm.cmake",
       "generator": "Ninja"
@@ -5262,32 +5290,8 @@
       ]
     },
     {
-      "name": "x86_64-linux-rocm-gfx803",
-      "configurePreset": "x86_64-linux-rocm-gfx803",
-      "jobs": 0,
-      "targets": [
-        "llama-install"
-      ]
-    },
-    {
-      "name": "x86_64-linux-rocm-gfx900",
-      "configurePreset": "x86_64-linux-rocm-gfx900",
-      "jobs": 0,
-      "targets": [
-        "llama-install"
-      ]
-    },
-    {
       "name": "x86_64-linux-rocm-gfx906",
       "configurePreset": "x86_64-linux-rocm-gfx906",
-      "jobs": 0,
-      "targets": [
-        "llama-install"
-      ]
-    },
-    {
-      "name": "x86_64-linux-rocm-gfx908",
-      "configurePreset": "x86_64-linux-rocm-gfx908",
       "jobs": 0,
       "targets": [
         "llama-install"
@@ -5310,16 +5314,8 @@
       ]
     },
     {
-      "name": "x86_64-linux-rocm-gfx1010",
-      "configurePreset": "x86_64-linux-rocm-gfx1010",
-      "jobs": 0,
-      "targets": [
-        "llama-install"
-      ]
-    },
-    {
-      "name": "x86_64-linux-rocm-gfx1011",
-      "configurePreset": "x86_64-linux-rocm-gfx1011",
+      "name": "x86_64-linux-rocm-gfx950",
+      "configurePreset": "x86_64-linux-rocm-gfx950",
       "jobs": 0,
       "targets": [
         "llama-install"
@@ -5334,8 +5330,24 @@
       ]
     },
     {
+      "name": "x86_64-linux-rocm-gfx1031",
+      "configurePreset": "x86_64-linux-rocm-gfx1031",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
       "name": "x86_64-linux-rocm-gfx1032",
       "configurePreset": "x86_64-linux-rocm-gfx1032",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1011",
+      "configurePreset": "x86_64-linux-rocm-gfx1011",
       "jobs": 0,
       "targets": [
         "llama-install"
@@ -5366,8 +5378,40 @@
       ]
     },
     {
+      "name": "x86_64-linux-rocm-gfx1103",
+      "configurePreset": "x86_64-linux-rocm-gfx1103",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1150",
+      "configurePreset": "x86_64-linux-rocm-gfx1150",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
       "name": "x86_64-linux-rocm-gfx1151",
       "configurePreset": "x86_64-linux-rocm-gfx1151",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1152",
+      "configurePreset": "x86_64-linux-rocm-gfx1152",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1153",
+      "configurePreset": "x86_64-linux-rocm-gfx1153",
       "jobs": 0,
       "targets": [
         "llama-install"
@@ -8568,32 +8612,6 @@
       ]
     },
     {
-      "name": "x86_64-linux-rocm-gfx803",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x86_64-linux-rocm-gfx803"
-        },
-        {
-          "type": "build",
-          "name": "x86_64-linux-rocm-gfx803"
-        }
-      ]
-    },
-    {
-      "name": "x86_64-linux-rocm-gfx900",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x86_64-linux-rocm-gfx900"
-        },
-        {
-          "type": "build",
-          "name": "x86_64-linux-rocm-gfx900"
-        }
-      ]
-    },
-    {
       "name": "x86_64-linux-rocm-gfx906",
       "steps": [
         {
@@ -8603,19 +8621,6 @@
         {
           "type": "build",
           "name": "x86_64-linux-rocm-gfx906"
-        }
-      ]
-    },
-    {
-      "name": "x86_64-linux-rocm-gfx908",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x86_64-linux-rocm-gfx908"
-        },
-        {
-          "type": "build",
-          "name": "x86_64-linux-rocm-gfx908"
         }
       ]
     },
@@ -8646,28 +8651,15 @@
       ]
     },
     {
-      "name": "x86_64-linux-rocm-gfx1010",
+      "name": "x86_64-linux-rocm-gfx950",
       "steps": [
         {
           "type": "configure",
-          "name": "x86_64-linux-rocm-gfx1010"
+          "name": "x86_64-linux-rocm-gfx950"
         },
         {
           "type": "build",
-          "name": "x86_64-linux-rocm-gfx1010"
-        }
-      ]
-    },
-    {
-      "name": "x86_64-linux-rocm-gfx1011",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "x86_64-linux-rocm-gfx1011"
-        },
-        {
-          "type": "build",
-          "name": "x86_64-linux-rocm-gfx1011"
+          "name": "x86_64-linux-rocm-gfx950"
         }
       ]
     },
@@ -8685,6 +8677,19 @@
       ]
     },
     {
+      "name": "x86_64-linux-rocm-gfx1031",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-linux-rocm-gfx1031"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-linux-rocm-gfx1031"
+        }
+      ]
+    },
+    {
       "name": "x86_64-linux-rocm-gfx1032",
       "steps": [
         {
@@ -8694,6 +8699,19 @@
         {
           "type": "build",
           "name": "x86_64-linux-rocm-gfx1032"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1011",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-linux-rocm-gfx1011"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-linux-rocm-gfx1011"
         }
       ]
     },
@@ -8737,6 +8755,32 @@
       ]
     },
     {
+      "name": "x86_64-linux-rocm-gfx1103",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-linux-rocm-gfx1103"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-linux-rocm-gfx1103"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1150",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-linux-rocm-gfx1150"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-linux-rocm-gfx1150"
+        }
+      ]
+    },
+    {
       "name": "x86_64-linux-rocm-gfx1151",
       "steps": [
         {
@@ -8746,6 +8790,32 @@
         {
           "type": "build",
           "name": "x86_64-linux-rocm-gfx1151"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1152",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-linux-rocm-gfx1152"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-linux-rocm-gfx1152"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-linux-rocm-gfx1153",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-linux-rocm-gfx1153"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-linux-rocm-gfx1153"
         }
       ]
     },

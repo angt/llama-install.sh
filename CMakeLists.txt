@@ -50,6 +50,7 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON CACHE BOOL "" FORCE)
 set(CMAKE_POSITION_INDEPENDENT_CODE    ON CACHE BOOL "" FORCE)
+set(CMAKE_SKIP_RPATH                   ON CACHE BOOL "" FORCE)
 
 set(GGML_CCACHE OFF CACHE BOOL "" FORCE)
 set(GGML_NATIVE OFF CACHE BOOL "" FORCE)
@@ -94,8 +95,13 @@ add_compile_options(
 )
 
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
-    add_link_options(-static-libgcc -static-libstdc++)
+    add_link_options(-static-libgcc)
     add_link_options(-Wl,--gc-sections -Wl,--strip-all)
+    if(NOT ROCM_PATH)
+        add_link_options(-static-libstdc++)
+    else()
+        add_link_options(-Wl,-rpath,/opt/rocm/lib)
+    endif()
 elseif(CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
     add_link_options(-Wl,-dead_strip -Wl,-S)
 else()

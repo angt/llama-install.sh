@@ -74,20 +74,22 @@
 
 | Architecture | Features          |
 | ------------ | ----------------- |
-| `gfx803`     | -                 |
-| `gfx900`     | -                 |
 | `gfx906`     | -                 |
-| `gfx908`     | ROCWMMA+FlashAttn |
 | `gfx90a`     | ROCWMMA+FlashAttn |
 | `gfx942`     | ROCWMMA+FlashAttn |
-| `gfx1010`    | -                 |
-| `gfx1011`    | -                 |
+| `gfx950`     | ROCWMMA+FlashAttn |
 | `gfx1030`    | -                 |
+| `gfx1031`    | -                 |
 | `gfx1032`    | -                 |
+| `gfx1011`    | -                 |
 | `gfx1100`    | ROCWMMA+FlashAttn |
 | `gfx1101`    | ROCWMMA+FlashAttn |
 | `gfx1102`    | ROCWMMA+FlashAttn |
+| `gfx1103`    | ROCWMMA+FlashAttn |
+| `gfx1150`    | ROCWMMA+FlashAttn |
 | `gfx1151`    | ROCWMMA+FlashAttn |
+| `gfx1152`    | ROCWMMA+FlashAttn |
+| `gfx1153`    | ROCWMMA+FlashAttn |
 | `gfx1200`    | ROCWMMA+FlashAttn |
 | `gfx1201`    | ROCWMMA+FlashAttn |
 
