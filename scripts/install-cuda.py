@@ -13,7 +13,7 @@ from functools import wraps
 ROOT = Path.cwd() / "deps" / "cuda"
 DEST = ROOT.with_suffix(".tmp")
 
-VERSION = os.getenv("CUDA_VERSION", "12.8.1")
+VERSION = os.getenv("CUDA_VERSION", "12.8.2")
 URL = "https://developer.download.nvidia.com/compute/cuda/redist"
 COMPONENTS = [
     "libcublas",
