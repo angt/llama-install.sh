@@ -1,18 +1,16 @@
-import os
 import re
 import sys
+from pathlib import Path
+from collections import defaultdict
+from fnmatch import fnmatch
 
 from huggingface_hub import sync_bucket
 import zstandard as zstd
-
 from elftools.elf.elffile import ELFFile
 from elftools.elf.dynamic import DynamicSection
 import pefile
 from macholib.MachO import MachO
-
-from pathlib import Path
-from collections import defaultdict
-from fnmatch import fnmatch
+from macholib.mach_o import LC_LOAD_DYLIB, LC_BUILD_VERSION, LC_VERSION_MIN_MACOSX
 
 SKIP_LIBS = [
     "ld-linux-*.so.*",
@@ -40,18 +38,14 @@ SKIP_LIBS = [
 def get_max_symbol_version(elf, sym):
     pattern = re.compile(rf"{re.escape(sym)}_(\d+(?:\.\d+)+)")
     versions = []
-
     if section := elf.get_section_by_name('.gnu.version_r'):
-        for entry in section.iter_versions():
-            for item in entry[1] if isinstance(entry, tuple) else getattr(entry, 'aux', []):
-                name = getattr(item, 'name', None)
-                if name is None and isinstance(item, (tuple, list)):
-                    name = next((x for x in item if isinstance(x, (str, bytes))), None)
+        for _, aux_iter in section.iter_versions():
+            for aux in aux_iter:
+                name = aux.name
                 if isinstance(name, bytes):
                     name = name.decode('utf-8', errors='ignore')
                 if name and (m := pattern.search(name)):
                     versions.append(tuple(map(int, m.group(1).split('.'))))
-
     return f"{sym} {'.'.join(map(str, max(versions)))}" if versions else None
 
 def analyze_elf(path, name, arch):
@@ -60,7 +54,7 @@ def analyze_elf(path, name, arch):
         case "freebsd": interp, sym = "ld-elf",   "FBSD"
         case _: raise Exception(f"Unsupported OS: {name}")
 
-    reqs = "None"
+    reqs = "-"
     libs = []
 
     with open(path, 'rb') as f:
@@ -71,9 +65,9 @@ def analyze_elf(path, name, arch):
 
         for seg in elf.iter_segments():
             if seg['p_type'] == 'PT_INTERP':
-                if interp in seg.get_interp_name():
-                    break
-                raise Exception(f"OS mismatch, expected: {arch}")
+                if interp not in seg.get_interp_name():
+                    raise Exception(f"OS mismatch, expected: {name}")
+                break
 
         for section in elf.iter_sections():
             if isinstance(section, DynamicSection):
@@ -124,11 +118,11 @@ def analyze_macho(path, arch):
             case _: continue
 
         for cmd, payload, data in header.commands:
-            if cmd.cmd == 12:
+            if cmd.cmd == LC_LOAD_DYLIB:
                 lib = data.decode('utf-8').strip('\x00')
-                libs.append(os.path.basename(lib))
-            if cmd.cmd in [0x32, 0x24]:
-                version = payload.minos if cmd.cmd == 0x32 else payload.version
+                libs.append(Path(lib).name)
+            if cmd.cmd in (LC_BUILD_VERSION, LC_VERSION_MIN_MACOSX):
+                version = payload.minos if cmd.cmd == LC_BUILD_VERSION else payload.version
                 major, minor = version >> 16, (version >> 8) & 0xff
                 reqs = f"macOS {major}.{minor}"
 
@@ -136,23 +130,18 @@ def analyze_macho(path, arch):
 
     raise Exception(f"Bad arch, expected: {arch}")
 
-def get_backend(files, base):
-    dirs = [os.path.dirname(os.path.relpath(f, base)) for f in files]
-    parts = os.path.commonpath(dirs).split(os.sep)
-    # parts = [arch, os, backend...]
-    return os.path.join(*parts[2:]) if len(parts) > 2 else ""
-
 def analyze(path, base):
-    parts = os.path.relpath(path, base).split(os.sep)
-    arch = parts[0]
-    name = parts[1]
+    rel = Path(path).relative_to(base)
+    arch = rel.parts[0]
+    name = rel.parts[1]
+    backend = str(Path(*rel.parts[2:-1])) if len(rel.parts) > 3 else (rel.parts[2] if len(rel.parts) > 2 else "")
 
     match name:
         case "windows": reqs, libs = analyze_pe(path, arch)
         case "macos":   reqs, libs = analyze_macho(path, arch)
         case _:         reqs, libs = analyze_elf(path, name, arch)
 
-    return name, arch, reqs, tuple(
+    return name, arch, backend, reqs, tuple(
         lib for lib in sorted(libs)
         if not any(fnmatch(lib, skip) for skip in SKIP_LIBS)
     )
@@ -167,25 +156,41 @@ def main():
     else:
         local_dir = "output"
 
-    groups = defaultdict(list)
+    entries = set()
     for src in Path(local_dir).rglob('*.zst'):
         dst = src.with_suffix('')
         with src.open('rb') as fsrc, dst.open('wb') as fdst:
             zstd.ZstdDecompressor().copy_stream(fsrc, fdst)
-        if (entry := analyze(str(dst), local_dir)):
-            groups[entry].append(str(dst))
+        entries.add(analyze(str(dst), local_dir))
+
+    groups = defaultdict(list)
+    for entry in entries:
+        name, arch, backend, version, libs = entry
+        top = backend.split('/')[0]
+        groups[(name, arch, top)].append(entry)
 
     cols = ["Name", "Arch", "Backend", "Version", "Libraries"]
-    rows = sorted([
-        [
-            name,
-            f"`{arch}`",
-            f"`{get_backend(files, local_dir)}`",
-            version,
-            " ".join(f"`{lib}`" for lib in libs) or "-"
-        ]
-        for (name, arch, version, libs), files in groups.items()
-    ])
+    rows = []
+    for (name, arch, top), group in sorted(groups.items()):
+        versions_libs = {(e[3], e[4]) for e in group}
+        if len(versions_libs) == 1:
+            rows.append([
+                name,
+                f"`{arch}`",
+                f"`{top}`",
+                group[0][3],
+                " ".join(f"`{lib}`" for lib in group[0][4]) or "-"
+            ])
+        else:
+            for name, arch, backend, version, libs in sorted(group):
+                rows.append([
+                    name,
+                    f"`{arch}`",
+                    f"`{backend}`",
+                    version,
+                    " ".join(f"`{lib}`" for lib in libs) or "-"
+                ])
+    rows.sort()
     widths = [max(map(len, x)) for x in zip(*([cols] + rows))]
     header = [[c.ljust(w) for c, w in zip(cols, widths)], ["-" * w for w in widths]]
     rows   = [[r.ljust(w) for r, w in zip(row, widths)] for row in rows]
