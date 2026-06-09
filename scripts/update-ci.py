@@ -3,6 +3,8 @@ from urllib.request import urlopen
 from pathlib import Path
 from ruamel.yaml import YAML
 
+CUDA_MAJOR = "12.8"
+
 updates = {}
 
 with urlopen("https://ziglang.org/download/index.json") as r:
@@ -13,6 +15,9 @@ with urlopen("https://vulkan.lunarg.com/sdk/latest/linux.txt") as r:
 
 with urlopen("https://rocm.nightlies.amd.com/whl-multi-arch/rocm/") as r:
     updates["ROCM_VERSION"] = sorted(re.findall(r'rocm-(\d+\.\d+\.\d+a\d+)\.tar\.gz', r.read().decode()))[-1]
+
+with urlopen("https://developer.download.nvidia.com/compute/cuda/redist/") as r:
+    updates["CUDA_VERSION"] = max(re.findall(rf'redistrib_({CUDA_MAJOR}\.[0-9.]+)\.json', r.read().decode()), key=lambda v: [*map(int, v.split('.'))])
 
 for key, value in updates.items():
     print(f" - {key}: {value}")
