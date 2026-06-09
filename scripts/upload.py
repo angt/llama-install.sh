@@ -1,30 +1,41 @@
-import os
-import random
 import sys
 import time
-from huggingface_hub import HfApi, utils
-from functools import wraps
+import httpx
+from huggingface_hub import HfApi, set_client_factory, utils
 
-api = HfApi()
 
-def retry(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        for i in reversed(range(60)):
+class RetryTransport(httpx.BaseTransport):
+    def __init__(self, transport, max_retries=5):
+        self._transport = transport
+        self._max_retries = max_retries
+
+    def handle_request(self, request):
+        for attempt in range(self._max_retries + 1):
             try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                if not i:
+                response = self._transport.handle_request(request)
+                if response.status_code != 429 and response.status_code < 500:
+                    return response
+                if attempt == self._max_retries:
+                    return response
+                response.close()
+            except (httpx.TransportError, httpx.TimeoutException):
+                if attempt == self._max_retries:
                     raise
-                print(f"\n[RETRY] {type(e).__name__}: {e}\n")
-                time.sleep(random.uniform(30, 90))
-    return wrapper
+            time.sleep(min(2**attempt, 30))
 
-@retry
-def upload(dst):
-    api.sync_bucket("output", f"hf://buckets/{dst}")
+    def close(self):
+        self._transport.close()
+
 
 utils.disable_progress_bars()
 
+set_client_factory(lambda: httpx.Client(
+    transport=RetryTransport(httpx.HTTPTransport()),
+    follow_redirects=True,
+    timeout=httpx.Timeout(timeout=30.0),
+))
+
+api = HfApi()
+
 if len(sys.argv) == 2:
-    upload(sys.argv[1])
+    api.sync_bucket("output", f"hf://buckets/{sys.argv[1]}")
