@@ -61,7 +61,7 @@ function Main {
     "Version: $LLAMA_VERSION"
 
     $INSTALL_DIR = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps"
-    $DIR = Join-Path $env:TEMP "llama-app-tmp"
+    $DIR = Join-Path $env:LOCALAPPDATA "llama-app"
     Remove-Item $DIR -Recurse -Force 2>$null
     New-Item -Path $DIR -Force -ItemType "Directory" | Out-Null
 
