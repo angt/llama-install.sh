@@ -37,6 +37,11 @@ jobs:
             runner: macos-latest
             install: sh install.sh
             llama: ~/.llama-app/llama
+
+          - platform: linux-gpu
+            runner: self-hosted
+            install: sh install.sh
+            llama: ~/.llama-app/llama
     steps:
       - uses: actions/checkout@v5
 
