@@ -71,17 +71,16 @@ function Main {
         Die "No prebuilt llama binary is available for your system." `
             "Please compile llama.cpp from source instead."
     }
-
+    if ($env:SKIP_INSTALL) {
+        "Installation skipped, SKIP_INSTALL is set"
+        return
+    }
     if (Test-Path "$INSTALL_DIR\llama.exe") {
         Move-Item "$INSTALL_DIR\llama.exe" "$DIR\llama.exe.old" -Force
     }
     Move-Item "$DIR\llama.exe" "$INSTALL_DIR\llama.exe" -Force
     Remove-Item $DIR -Recurse -Force 2>$null
 
-    if ($args.Length -gt 0) {
-        & llama.exe @args
-        exit $LASTEXITCODE
-    }
     "Installation completed successfully"
     ""
     "Please run the following command to start it:"

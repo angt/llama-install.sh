@@ -124,7 +124,10 @@ main() {
 			"Please compile llama.cpp from source instead."
 	) || exit
 
-	[ $# -gt 0 ] && exec ~/.llama-app/llama "$@"
+	if [ "$SKIP_INSTALL" ]; then
+		printf "Installation skipped, SKIP_INSTALL is set\n"
+		return
+	fi
 
 	mkdir -p "$HOME/.local/bin" &&
 	ln -sf "$HOME/.llama-app/llama" "$HOME/.local/bin/llama" || die \
