@@ -101,6 +101,15 @@ main() {
 
 	[ "$HOME" ] || die "No HOME, please check your OS"
 
+	# Migrate from the old symlink-based install, remove later
+	if [ "$(readlink ~/.local/bin/llama)" = "$HOME/.llama-app/llama" ]
+	then
+		if   cp -L ~/.local/bin/llama     ~/.local/bin/llama.fix 2>/dev/null
+		then mv    ~/.local/bin/llama.fix ~/.local/bin/llama
+		else rm -f ~/.local/bin/llama
+		fi
+	fi
+
 	[ "$LLAMA_VERSION" ] || LLAMA_VERSION=$(curl -fsSL "$REPO/latest")
 	[ "$LLAMA_VERSION" ] || die "No version found"
 	printf "Version: %s\n" "$LLAMA_VERSION"
@@ -129,8 +138,9 @@ main() {
 		return
 	fi
 
-	mkdir -p "$HOME/.local/bin" &&
-	ln -sf "$HOME/.llama-app/llama" "$HOME/.local/bin/llama" || die \
+	mkdir -p ~/.local/bin &&
+	cp ~/.llama-app/llama ~/.local/bin/llama.tmp &&
+	mv ~/.local/bin/llama.tmp ~/.local/bin/llama || die \
 		"Couldn't install llama to ~/.local/bin"
 
 	printf "Installation completed successfully\n\n"
