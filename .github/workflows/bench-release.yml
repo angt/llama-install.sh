@@ -1,0 +1,44 @@
+name: Bench release
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_version:
+        required: false
+        default: ''
+        type: string
+      current_version:
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  bench:
+    name: ${{ matrix.quant }}
+    runs-on: self-hosted
+    strategy:
+      fail-fast: false
+      matrix:
+        quant:
+          - Q2_K_XL
+          - Q3_K_S
+          - Q3_K_M
+          - Q3_K_XL
+          - Q4_0
+          - Q4_1
+          - Q4_K_S
+          - Q4_K_M
+          - Q4_K_XL
+          - Q5_K_S
+          - Q5_K_M
+          - Q5_K_XL
+          - Q6_K
+          - Q8_0
+          - BF16
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Bench
+        env:
+          LLAMA_BUCKET: ${{ vars.HF_REPO }}
+        run: python3 scripts/bench.py unsloth/Qwen3.5-0.8B-GGUF:${{ matrix.quant }} ${{ inputs.base_version }} ${{ inputs.current_version }}
