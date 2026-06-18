@@ -553,6 +553,7 @@ jobs:
     uses: ./.github/workflows/test-release.yml
     with:
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+    secrets: inherit
 
   latest:
     runs-on: ubuntu-latest

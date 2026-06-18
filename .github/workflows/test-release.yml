@@ -44,7 +44,10 @@ jobs:
         env:
           LLAMA_BUCKET: ${{ vars.HF_REPO }}
           LLAMA_VERSION: ${{ inputs.llamacpp_version }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: ${{ matrix.install }}
 
       - name: Test
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: ${{ matrix.llama }} bench -hf ggml-org/test-model-stories260K

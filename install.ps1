@@ -1,6 +1,11 @@
 if (!$LLAMA_BUCKET) { $LLAMA_BUCKET = $env:LLAMA_BUCKET }
 if (!$LLAMA_BUCKET) { $LLAMA_BUCKET = "ggml-org/install.sh" }
 $REPO = "https://huggingface.co/buckets/$LLAMA_BUCKET/resolve"
+$WebParams = @{}
+
+if ($env:HF_TOKEN) {
+    $WebParams["Headers"] = @{ "Authorization" = "Bearer $env:HF_TOKEN" }
+}
 
 function Die {
     param([string[]]$Messages)
@@ -17,11 +22,11 @@ function Download {
     try {
         if ($URL -like "*.zst") {
             Download "unzstd.exe" "$ARCH/windows/unzstd.exe"
-            Invoke-RestMethod "$REPO/$LLAMA_VERSION/$URL" -OutFile "$DIR\tmp.zst"
+            Invoke-RestMethod "$REPO/$LLAMA_VERSION/$URL" -OutFile "$DIR\tmp.zst" @WebParams
             Start-Process -FilePath "$DIR\unzstd.exe" -RedirectStandardInput "$DIR\tmp.zst" -RedirectStandardOutput "$DIR\$FILE" -NoNewWindow -Wait
             Remove-Item "$DIR\tmp.zst"
         } else {
-            Invoke-RestMethod "$REPO/$LLAMA_VERSION/$URL" -OutFile "$DIR\$FILE"
+            Invoke-RestMethod "$REPO/$LLAMA_VERSION/$URL" -OutFile "$DIR\$FILE" @WebParams
         }
     } catch {
         Die "Failed to download"
@@ -56,7 +61,7 @@ function Main {
     }
 
     if (!$LLAMA_VERSION) { $LLAMA_VERSION = $env:LLAMA_VERSION }
-    if (!$LLAMA_VERSION) { $LLAMA_VERSION = Invoke-RestMethod "$REPO/latest" }
+    if (!$LLAMA_VERSION) { $LLAMA_VERSION = Invoke-RestMethod "$REPO/latest" @WebParams }
     if (!$LLAMA_VERSION) { Die "No version found" }
     "Version: $LLAMA_VERSION"
 
