@@ -13,6 +13,14 @@ SEED = 42
 WIN32 = sys.platform == "win32"
 
 def download(version):
+    suffix = ".exe" if WIN32 else ""
+    tag = version.split("-")[0] if version else None
+
+    if tag:
+        dest = Path(f"llama-app-{tag}{suffix}").resolve()
+        if dest.exists():
+            return dest
+
     env = os.environ.copy()
     env["LLAMA_VERSION"] = version or ""
     env["SKIP_INSTALL"] = "1"
@@ -31,12 +39,9 @@ def download(version):
     if version and not detected.startswith(version):
         sys.exit(f"Error: version mismatch (expected {version}, got {detected})")
 
-    version = detected
-
-    dest = Path(f"llama-app-{version}.exe" if WIN32 else f"llama-app-{version}").resolve()
+    tag = detected.split("-")[0]
+    dest = Path(f"llama-app-{tag}{suffix}").resolve()
     shutil.copy2(src, dest)
-
-    print(f"Downloaded {version}")
     return dest
 
 def run_bench(binary, model_tag):
