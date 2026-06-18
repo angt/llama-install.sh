@@ -162,6 +162,7 @@ wmemset(wchar_t *s, wchar_t c, size_t n)
 #undef nanl
 #undef rintl
 #undef lrintl
+#undef lroundl
 
 float
 frexpf(float x, int *exp)
@@ -230,6 +231,12 @@ long
 lrintl(long double x)
 {
     return lrint((double)x);
+}
+
+long
+lroundl(long double x)
+{
+    return lround((double)x);
 }
 
 #undef isnan
