@@ -46,7 +46,7 @@ def download(version):
 
 def run_bench(binary, model_tag):
     try:
-        r = subprocess.run([str(binary), "bench", "-hf", model_tag, "-o", "jsonl", "-r", "1"],
+        r = subprocess.run([str(binary), "bench", "-fa", "0,1", "-hf", model_tag, "-o", "jsonl", "-r", "1"],
                            capture_output=True, text=True, timeout=300)
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError) as e:
         print(f"  error: {e}")
@@ -60,7 +60,8 @@ def run_bench(binary, model_tag):
         if not line.startswith("{"):
             continue
         obj = json.loads(line)
-        key = f"pp{obj['n_prompt']}" if obj["n_prompt"] else f"tg{obj['n_gen']}"
+        test = f"pp{obj['n_prompt']}" if obj["n_prompt"] else f"tg{obj['n_gen']}"
+        key = f"{test}/fa{obj['flash_attn']}"
         metrics[key] = obj["avg_ts"]
     return metrics
 
@@ -171,7 +172,7 @@ def main():
     for key in sorted(comp):
         r = comp[key]
         verdict = "WORSE" if r["sig"] else "ok"
-        print(f"{key:>5}: {r['base_mean']:>6.2f} {r['cur_mean']:>6.2f} p={r['p_adj']:.4f} {verdict}")
+        print(f"{key:>10}: {r['base_mean']:>6.2f} {r['cur_mean']:>6.2f} p={r['p_adj']:.4f} {verdict}")
 
     sys.exit(1 if any_worse else 0)
 
