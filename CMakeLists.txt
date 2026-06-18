@@ -111,6 +111,8 @@ endif()
 include("${CMAKE_CURRENT_LIST_DIR}/win32/shim.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/vulkan/stub.cmake")
 
+add_compile_definitions(LLAMA_INSTALL_BUILD=1)
+
 if(LLAMA_INSTALL_PROBE)
     add_subdirectory(${LLAMA_INSTALL_PROBE})
     set(LLAMA_INSTALL_TARGET "probe")
