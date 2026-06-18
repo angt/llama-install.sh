@@ -17,6 +17,13 @@ check_path() {
 	return 1
 }
 
+curl() {
+	if [ -n "$HF_TOKEN" ]
+	then command curl -H "Authorization: Bearer $HF_TOKEN" "$@"
+	else command curl "$@"
+	fi
+}
+
 dl_bin() {
 	[ -x "$1" ] && return
 	check_bin curl || die "Please install curl"
