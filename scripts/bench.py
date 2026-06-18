@@ -61,7 +61,7 @@ def run_bench(binary, model_tag):
             continue
         obj = json.loads(line)
         test = f"pp{obj['n_prompt']}" if obj["n_prompt"] else f"tg{obj['n_gen']}"
-        key = f"{test}/fa{obj['flash_attn']}"
+        key = f"{test}/fa{int(obj['flash_attn'])}"
         metrics[key] = obj["avg_ts"]
     return metrics
 
