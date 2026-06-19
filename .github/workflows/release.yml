@@ -553,22 +553,5 @@ jobs:
     uses: ./.github/workflows/test-release.yml
     with:
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      write_latest: ${{ needs.init.outputs.write_latest == 'true' }}
     secrets: inherit
-
-  latest:
-    runs-on: ubuntu-latest
-    needs:
-      - init
-      - test
-    if: ${{ vars.HF_REPO != '' && needs.init.outputs.write_latest == 'true' }}
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Write latest file
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          pip install -U "hf[hf_xet]"
-          mkdir output
-          printf "${{ needs.init.outputs.llamacpp_version }}" > output/latest
-          python scripts/upload.py ${{ vars.HF_REPO }}
