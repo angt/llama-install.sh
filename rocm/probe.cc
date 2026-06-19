@@ -1,9 +1,19 @@
 #include <cstdio>
 #include <hip/hip_runtime.h>
 
+#ifdef __linux__
+#include <sys/epoll.h>
+#endif
+
 int
 main(void)
 {
+#ifdef __linux__
+    // Force GLIBC_2.35, waiting for a better solution
+    if (getenv("_probe_glibc_floor"))
+        (void)epoll_pwait2(-1, NULL, 0, NULL, NULL);
+#endif
+
     int count = 0;
 
     if (hipGetDeviceCount(&count) != hipSuccess || !count)
