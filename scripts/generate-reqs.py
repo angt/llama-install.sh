@@ -19,6 +19,7 @@ SKIP_LIBS = [
     "libthr.so.*",
     "libdl.so.*",
     "libpthread.so.*",
+    "libstdc++.so.*",
     "api-ms-*.dll",
     "ADVAPI32.dll",
     "CRYPT32.dll",
