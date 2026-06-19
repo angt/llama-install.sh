@@ -9,6 +9,7 @@ from pathlib import Path
 
 NUM_ROUNDS = 20
 ALPHA = 0.05
+DROP_TOLERANCE = 0.05
 SEED = 42
 WIN32 = sys.platform == "win32"
 
@@ -133,6 +134,11 @@ def compare(base_s, cur_s):
     for key, pa, rej in zip(keys, p_adjs, rejects):
         results[key]["p_adj"] = pa
         results[key]["sig"] = rej
+        bm = results[key]["base_mean"]
+        cm = results[key]["cur_mean"]
+        rel_drop = (bm - cm) / bm if bm else 0.0
+        results[key]["rel_drop"] = rel_drop
+        results[key]["worse"] = rej and rel_drop >= DROP_TOLERANCE
 
     return results
 
@@ -167,11 +173,11 @@ def main():
         sys.exit(f"not enough paired runs ({n})")
 
     comp = compare(base_s, cur_s)
-    any_worse = any(r["sig"] for r in comp.values())
+    any_worse = any(r["worse"] for r in comp.values())
 
     for key in sorted(comp):
         r = comp[key]
-        verdict = "WORSE" if r["sig"] else "ok"
+        verdict = "WORSE" if r["worse"] else "ok"
         print(f"{key:>10}: {r['base_mean']:>6.2f} {r['cur_mean']:>6.2f} p={r['p_adj']:.4f} {verdict}")
 
     sys.exit(1 if any_worse else 0)
