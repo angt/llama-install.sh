@@ -110,6 +110,7 @@ endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/win32/shim.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/vulkan/stub.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/cuda/stub.cmake")
 
 add_compile_definitions(LLAMA_INSTALL_BUILD=1)
 
@@ -127,9 +128,6 @@ else()
 endif()
 
 llama_install_link_win32_shim(${LLAMA_INSTALL_TARGET})
-
-include("${CMAKE_CURRENT_LIST_DIR}/cuda/prune.cmake")
-llama_install_prune_cuda(${LLAMA_INSTALL_TARGET})
 
 set(LLAMA_INSTALL_FILE "${LLAMA_INSTALL_DIR}/${LLAMA_INSTALL_TARGET}.zst")
 

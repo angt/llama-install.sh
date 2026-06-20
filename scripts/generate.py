@@ -336,13 +336,14 @@ def generate_x86_64_linux_rocm_probe_preset():
 def generate_linux_cuda_presets(arch):
     configs = []
     for cuda_arch in CUDA_ARCHS:
-        name = cuda_arch
         cache = {
             "GGML_CUDA": "ON",
             "GGML_STATIC": "ON",
-            "CMAKE_CUDA_ARCHITECTURES": f"{cuda_arch}",
+            "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == CUDA_ARCHS[-1] else f"{cuda_arch}-real",
+            "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+            "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include",
         }
-        configs.append((name, cache))
+        configs.append((cuda_arch, cache))
 
     return generate_presets(
         os_name   = 'linux',
@@ -359,6 +360,8 @@ def generate_linux_cuda_probe_preset(arch):
         "LLAMA_INSTALL_PROBE": "cuda",
         "LLAMA_INSTALL_PROBE_ARCHS": ",".join(CUDA_ARCHS),
         "CMAKE_CUDA_ARCHITECTURES": ";".join(CUDA_ARCHS), # useless
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include",
     }
     configs.append((name, cache))
 
