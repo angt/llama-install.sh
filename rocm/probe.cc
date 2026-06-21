@@ -10,8 +10,10 @@ main(void)
 {
 #ifdef __linux__
     // Force GLIBC_2.35, waiting for a better solution
-    if (getenv("_probe_glibc_floor"))
-        (void)epoll_pwait2(-1, NULL, 0, NULL, NULL);
+    if (getenv("_probe_glibc_floor")) {
+        struct epoll_event e{0};
+        (void)epoll_pwait2(-1, &e, 0, NULL, NULL);
+    }
 #endif
 
     int count = 0;
