@@ -15,7 +15,7 @@ main(void)
 #ifdef __linux__
     // Force GLIBC_2.35, waiting for a better solution
     if (getenv("_probe_glibc_floor"))
-        (void)epoll_pwait2(-1, NULL, 0, NULL, NULL);
+        (void)epoll_pwait2(-1, &(struct epoll_event){0}, 0, NULL, NULL);
 #endif
 
     int arch[] = { PROBE_ARCH };
