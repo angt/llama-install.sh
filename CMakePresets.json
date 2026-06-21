@@ -2786,7 +2786,9 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "75"
+        "CMAKE_CUDA_ARCHITECTURES": "75-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2800,7 +2802,9 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "80"
+        "CMAKE_CUDA_ARCHITECTURES": "80-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2814,7 +2818,9 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "86"
+        "CMAKE_CUDA_ARCHITECTURES": "86-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2828,7 +2834,9 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "89"
+        "CMAKE_CUDA_ARCHITECTURES": "89-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2842,7 +2850,9 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "90"
+        "CMAKE_CUDA_ARCHITECTURES": "90-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2856,7 +2866,9 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "100"
+        "CMAKE_CUDA_ARCHITECTURES": "100-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2870,7 +2882,9 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "120"
+        "CMAKE_CUDA_ARCHITECTURES": "120",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2884,7 +2898,9 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "LLAMA_INSTALL_PROBE": "cuda",
         "LLAMA_INSTALL_PROBE_ARCHS": "75,80,86,89,90,100,120",
-        "CMAKE_CUDA_ARCHITECTURES": "75;80;86;89;90;100;120"
+        "CMAKE_CUDA_ARCHITECTURES": "75;80;86;89;90;100;120",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2898,7 +2914,9 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "75"
+        "CMAKE_CUDA_ARCHITECTURES": "75-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2912,7 +2930,9 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "80"
+        "CMAKE_CUDA_ARCHITECTURES": "80-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2926,7 +2946,9 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "86"
+        "CMAKE_CUDA_ARCHITECTURES": "86-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2940,7 +2962,9 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "89"
+        "CMAKE_CUDA_ARCHITECTURES": "89-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2954,7 +2978,9 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "90"
+        "CMAKE_CUDA_ARCHITECTURES": "90-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2968,7 +2994,9 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "100"
+        "CMAKE_CUDA_ARCHITECTURES": "100-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2982,7 +3010,9 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "120"
+        "CMAKE_CUDA_ARCHITECTURES": "120",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
@@ -2996,7 +3026,9 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "LLAMA_INSTALL_PROBE": "cuda",
         "LLAMA_INSTALL_PROBE_ARCHS": "75,80,86,89,90,100,120",
-        "CMAKE_CUDA_ARCHITECTURES": "75;80;86;89;90;100;120"
+        "CMAKE_CUDA_ARCHITECTURES": "75;80;86;89;90;100;120",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
       "toolchainFile": "toolchains/base.cmake",
       "generator": "Ninja"
