@@ -33,10 +33,15 @@ foreach(_lib cublas cublasLt)
         continue() # already pruned (re-entrant find_package call)
     endif()
 
+    set(_prune_arch ${_arch})
+    if(_lib STREQUAL "cublas" AND _arch EQUAL 89)
+        set(_prune_arch 86)
+    endif()
+
     set(_dst "${_pruned_dir}/lib${_lib}_sm${_arch}.a")
-    message(STATUS "Pruning ${_lib} for sm_${_arch}...")
+    message(STATUS "Pruning ${_lib} for sm_${_prune_arch}...")
     execute_process(
-        COMMAND ${_CUDA_NVPRUNE} -arch sm_${_arch} -o "${_dst}" "${_loc}"
+        COMMAND ${_CUDA_NVPRUNE} -arch sm_${_prune_arch} -o "${_dst}" "${_loc}"
         OUTPUT_QUIET
         RESULT_VARIABLE _rc
     )
