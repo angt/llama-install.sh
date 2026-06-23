@@ -35,6 +35,7 @@ main(void)
         return 3;
 
     int best_arch = 0;
+    int last_arch = arch[n_arch - 1];
 
     for (int i = 0; i < count; i++) {
         CUdevice device;
@@ -50,8 +51,10 @@ main(void)
         int device_arch = major * 10 + minor;
 
         for (int j = 0; j < n_arch; j++) {
-            if (arch[j] <= device_arch && arch[j] > best_arch)
-                best_arch = arch[j];
+            int a = arch[j];
+            if (a <= device_arch && a > best_arch &&
+                (a / 10 == device_arch / 10 || a == last_arch)) // keep major
+                best_arch = a;
         }
     }
     if (!best_arch)
