@@ -21,6 +21,7 @@ COMPONENTS = [
     "cuda_nvcc",
     "cuda_cccl",
     "cuda_nvprune",
+    "cuda_cuobjdump",
 ]
 
 def retry(func):
