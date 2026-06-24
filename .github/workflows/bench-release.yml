@@ -14,7 +14,7 @@ on:
 
 jobs:
   bench:
-    name: ${{ matrix.quant }}
+    name: ${{ matrix.model }}:${{ matrix.quant }}
     runs-on: self-hosted
     strategy:
       fail-fast: false
