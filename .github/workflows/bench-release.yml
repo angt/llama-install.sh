@@ -19,19 +19,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        model:
+          - unsloth/Qwen3.5-0.8B-GGUF
+          - unsloth/Qwen3.6-27B-GGUF
+          - unsloth/gpt-oss-20b-GGUF
+          - unsloth/gemma-4-26B-A4B-it-GGUF
+          - unsloth/gemma-4-E4B-it-GGUF
         quant:
-          - Q2_K_XL
           - Q3_K_S
           - Q3_K_M
-          - Q3_K_XL
           - Q4_0
           - Q4_1
           - Q4_K_S
           - Q4_K_M
-          - Q4_K_XL
           - Q5_K_S
           - Q5_K_M
-          - Q5_K_XL
           - Q6_K
           - Q8_0
           - BF16
@@ -41,4 +43,4 @@ jobs:
       - name: Bench
         env:
           LLAMA_BUCKET: ${{ vars.HF_REPO }}
-        run: python3 scripts/bench.py unsloth/Qwen3.5-0.8B-GGUF:${{ matrix.quant }} ${{ inputs.base_version }} ${{ inputs.current_version }}
+        run: python3 scripts/bench.py ${{ matrix.model }}:${{ matrix.quant }} ${{ inputs.base_version }} ${{ inputs.current_version }}
