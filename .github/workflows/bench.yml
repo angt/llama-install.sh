@@ -58,5 +58,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN_BENCHES }}
         run: |
           VERSION=$(~/.llama-app/llama version)
-          pip install -U "hf[hf_xet]"
+          pip install -U "hf[hf_xet]" ||:
           python scripts/upload.py ${{ vars.HF_REPO_BENCHES }}/${VERSION}
