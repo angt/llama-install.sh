@@ -160,6 +160,9 @@ def main():
     base_s, cur_s = collect_pairs(base_bin, cur_bin, model_tag)
 
     if not any(cur_s.values()):
+        if not any(base_s.values()):
+            print(f"skipped: {model_tag} produced no results (model or quant may not exist)")
+            sys.exit(0)
         sys.exit(f"current ({cur_bin.stem}) produced no results")
 
     if not any(base_s.values()):
