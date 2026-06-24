@@ -1,4 +1,4 @@
-name: Bench release
+name: Bench compare
 
 on:
   workflow_dispatch:
@@ -14,11 +14,13 @@ on:
 
 jobs:
   bench:
-    name: ${{ matrix.model }}:${{ matrix.quant }}
-    runs-on: self-hosted
+    name: ${{ matrix.backend }}:${{ matrix.model }}:${{ matrix.quant }}
+    runs-on: [self-hosted, ${{ matrix.backend }}]
     strategy:
       fail-fast: false
       matrix:
+        backend:
+          - gfx1151
         model:
           - unsloth/Qwen3.5-0.8B-GGUF
           - unsloth/Qwen3.6-27B-GGUF
@@ -43,4 +45,4 @@ jobs:
       - name: Bench
         env:
           LLAMA_BUCKET: ${{ vars.HF_REPO }}
-        run: python3 scripts/bench.py ${{ matrix.model }}:${{ matrix.quant }} ${{ inputs.base_version }} ${{ inputs.current_version }}
+        run: python3 scripts/bench-compare.py ${{ matrix.model }}:${{ matrix.quant }} ${{ inputs.base_version }} ${{ inputs.current_version }}
