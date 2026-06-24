@@ -15,7 +15,7 @@ on:
 jobs:
   bench:
     name: ${{ matrix.backend }}:${{ matrix.model }}:${{ matrix.quant }}
-    runs-on: [self-hosted, ${{ matrix.backend }}]
+    runs-on: [self-hosted, "${{ matrix.backend }}"]
     strategy:
       fail-fast: false
       matrix:
