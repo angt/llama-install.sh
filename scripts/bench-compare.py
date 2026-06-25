@@ -47,7 +47,7 @@ def download(version):
 
 def run_bench(binary, model_tag):
     try:
-        r = subprocess.run([str(binary), "bench", "-fa", "0,1", "-hf", model_tag, "-o", "jsonl", "-r", "10"],
+        r = subprocess.run([str(binary), "bench", "--offline", "-fa", "0,1", "-hf", model_tag, "-o", "jsonl", "-r", "10"],
                            capture_output=True, text=True, timeout=300)
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError) as e:
         print(f"  error: {e}")
