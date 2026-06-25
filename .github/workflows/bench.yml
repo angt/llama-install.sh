@@ -51,7 +51,7 @@ jobs:
           BACKEND=${{ matrix.backend }}
           rm -rf output
           mkdir -p "output/${BACKEND}/${NAME}"
-          ~/.llama-app/llama bench -fa 0,1 -hf "${MODEL}:${{ matrix.quant }}" -o jsonl -r 10 > "output/${BACKEND}/${NAME}/${{ matrix.quant }}.jsonl"
+          ~/.llama-app/llama bench --offline -fa 0,1 -hf "${MODEL}:${{ matrix.quant }}" -o jsonl -r 10 > "output/${BACKEND}/${NAME}/${{ matrix.quant }}.jsonl"
 
       - name: Push
         env:
