@@ -59,4 +59,4 @@ jobs:
         run: |
           VERSION=$(~/.llama-app/llama version)
           pip install -U "hf[hf_xet]" ||:
-          python scripts/upload.py ${{ vars.HF_REPO_BENCHES }}/${VERSION}
+          python3 scripts/upload.py ${{ vars.HF_REPO_BENCHES }}/${VERSION}
