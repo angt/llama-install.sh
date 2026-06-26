@@ -50,7 +50,7 @@ jobs:
       - name: Test
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: ${{ matrix.llama }} bench -hf ggml-org/test-model-stories260K
+        run: ${{ matrix.llama }} bench -v -hf ggml-org/test-model-stories260K
 
   latest:
     runs-on: ubuntu-latest
