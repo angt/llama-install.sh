@@ -38,25 +38,44 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Bench
+      - name: Install
         env:
           LLAMA_BUCKET: ${{ vars.HF_REPO }}
           LLAMA_VERSION: ${{ inputs.version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: SKIP_INSTALL=1 sh install.sh
+
+      - name: Check model
+        id: check
+        env:
+          MODEL: ${{ matrix.model }}
+          QUANT: ${{ matrix.quant }}
         run: |
-          SKIP_INSTALL=1 sh install.sh
-          MODEL=${{ matrix.model }}
-          NAME="${MODEL%-GGUF}"
+          if ~/.llama-app/llama download --offline -hf "$MODEL:$QUANT" 1>/dev/null
+          then echo "present=true"
+          else echo "present=false"
+          fi >> "$GITHUB_OUTPUT"
+
+      - name: Bench
+        if: steps.check.outputs.present == 'true'
+        env:
+          MODEL: ${{ matrix.model }}
+          BACKEND: ${{ matrix.backend }}
+          QUANT: ${{ matrix.quant }}
+        run: |
+          NAME="$MODEL"
+          NAME="${NAME%-GGUF}"
           NAME="${NAME#*/}"
-          BACKEND=${{ matrix.backend }}
           rm -rf output
-          mkdir -p "output/${BACKEND}/${NAME}"
-          ~/.llama-app/llama bench --offline -fa 0,1 -hf "${MODEL}:${{ matrix.quant }}" -o jsonl -r 10 > "output/${BACKEND}/${NAME}/${{ matrix.quant }}.jsonl"
+          mkdir -p "output/$BACKEND/$NAME"
+          ~/.llama-app/llama bench --offline -fa 0,1 -hf "$MODEL:$QUANT" -o jsonl -r 10 > "output/$BACKEND/$NAME/$QUANT.jsonl"
 
       - name: Push
+        if: steps.check.outputs.present == 'true'
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN_BENCHES }}
+          REPO: ${{ vars.HF_REPO_BENCHES }}
         run: |
           VERSION=$(~/.llama-app/llama version)
           pip install -U "hf[hf_xet]" ||:
-          python3 scripts/upload.py ${{ vars.HF_REPO_BENCHES }}/${VERSION}
+          python3 scripts/upload.py "$REPO/$VERSION"
