@@ -68,7 +68,7 @@ jobs:
           NAME="${NAME#*/}"
           rm -rf output
           mkdir -p "output/$BACKEND/$NAME"
-          ~/.llama-app/llama bench --offline -fa 0,1 -hf "$MODEL:$QUANT" -o jsonl -r 10 > "output/$BACKEND/$NAME/$QUANT.jsonl"
+          ~/.llama-app/llama bench --offline -v -fa 0,1 -hf "$MODEL:$QUANT" -o jsonl -r 10 > "output/$BACKEND/$NAME/$QUANT.jsonl"
 
       - name: Push
         if: steps.check.outputs.present == 'true'
