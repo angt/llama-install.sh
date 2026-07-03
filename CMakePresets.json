@@ -2882,7 +2882,23 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "120",
+        "CMAKE_CUDA_ARCHITECTURES": "120-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "aarch64-linux-cuda-121",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/aarch64/linux/cuda/121",
+        "LLAMA_INSTALL_OS": "linux",
+        "LLAMA_INSTALL_ARCH": "aarch64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "121",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
@@ -2897,8 +2913,9 @@
         "LLAMA_INSTALL_OS": "linux",
         "LLAMA_INSTALL_ARCH": "aarch64",
         "LLAMA_INSTALL_PROBE": "cuda",
-        "LLAMA_INSTALL_PROBE_ARCHS": "75,80,86,89,90,100,120",
-        "CMAKE_CUDA_ARCHITECTURES": "75;80;86;89;90;100;120",
+        "LLAMA_INSTALL_PROBE_ARCHS": "75,80,86,89,90,100,120,121",
+        "LLAMA_INSTALL_PROBE_VERSIONS": "128,128,128,128,128,128,128,129",
+        "CMAKE_CUDA_ARCHITECTURES": "75;80;86;89;90;100;120;121",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
@@ -3010,7 +3027,23 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
-        "CMAKE_CUDA_ARCHITECTURES": "120",
+        "CMAKE_CUDA_ARCHITECTURES": "120-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
+        "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-linux-cuda-121",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/cuda/121",
+        "LLAMA_INSTALL_OS": "linux",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "121",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
@@ -3025,8 +3058,9 @@
         "LLAMA_INSTALL_OS": "linux",
         "LLAMA_INSTALL_ARCH": "x86_64",
         "LLAMA_INSTALL_PROBE": "cuda",
-        "LLAMA_INSTALL_PROBE_ARCHS": "75,80,86,89,90,100,120",
-        "CMAKE_CUDA_ARCHITECTURES": "75;80;86;89;90;100;120",
+        "LLAMA_INSTALL_PROBE_ARCHS": "75,80,86,89,90,100,120,121",
+        "LLAMA_INSTALL_PROBE_VERSIONS": "128,128,128,128,128,128,128,129",
+        "CMAKE_CUDA_ARCHITECTURES": "75;80;86;89;90;100;120;121",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
       },
@@ -5250,6 +5284,14 @@
       ]
     },
     {
+      "name": "aarch64-linux-cuda-121",
+      "configurePreset": "aarch64-linux-cuda-121",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
       "name": "aarch64-linux-cuda-probe",
       "configurePreset": "aarch64-linux-cuda-probe",
       "jobs": 0,
@@ -5308,6 +5350,14 @@
     {
       "name": "x86_64-linux-cuda-120",
       "configurePreset": "x86_64-linux-cuda-120",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-linux-cuda-121",
+      "configurePreset": "x86_64-linux-cuda-121",
       "jobs": 0,
       "targets": [
         "llama-install"
@@ -8527,6 +8577,19 @@
       ]
     },
     {
+      "name": "aarch64-linux-cuda-121",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "aarch64-linux-cuda-121"
+        },
+        {
+          "type": "build",
+          "name": "aarch64-linux-cuda-121"
+        }
+      ]
+    },
+    {
       "name": "aarch64-linux-cuda-probe",
       "steps": [
         {
@@ -8627,6 +8690,19 @@
         {
           "type": "build",
           "name": "x86_64-linux-cuda-120"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-linux-cuda-121",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-linux-cuda-121"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-linux-cuda-121"
         }
       ]
     },

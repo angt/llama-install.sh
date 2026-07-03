@@ -6,6 +6,9 @@ on:
       filter:
         type: string
         default: 'x86_64-linux-cuda'
+      cuda_code:
+        type: string
+        default: '128'
       deploy:
         type: boolean
       llamacpp_repo:
@@ -24,9 +27,13 @@ jobs:
   build:
     runs-on: ${{ startsWith(inputs.filter, 'aarch64-') && 'ubuntu-22.04-arm' || 'ubuntu-22.04' }}
     env:
-      CUDA_VERSION: "12.8.2"
+      CUDA_VERSION_128: "12.8.2"
+      CUDA_VERSION_129: "12.9.0"
     steps:
       - uses: actions/checkout@v5
+
+      - name: Select CUDA version
+        run: echo "CUDA_VERSION=${CUDA_VERSION_${{ inputs.cuda_code }}}" >> "$GITHUB_ENV"
 
       - name: Install deps
         run: |

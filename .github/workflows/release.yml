@@ -420,18 +420,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        filter:
-          - aarch64-linux-cuda-75
-          - aarch64-linux-cuda-80
-          - aarch64-linux-cuda-86
-          - aarch64-linux-cuda-89
-          - aarch64-linux-cuda-90
-          - aarch64-linux-cuda-100
-          - aarch64-linux-cuda-120
-          - aarch64-linux-cuda-probe
+        include:
+          - filter: aarch64-linux-cuda-75
+            cuda_code: '128'
+          - filter: aarch64-linux-cuda-80
+            cuda_code: '128'
+          - filter: aarch64-linux-cuda-86
+            cuda_code: '128'
+          - filter: aarch64-linux-cuda-89
+            cuda_code: '128'
+          - filter: aarch64-linux-cuda-90
+            cuda_code: '128'
+          - filter: aarch64-linux-cuda-100
+            cuda_code: '128'
+          - filter: aarch64-linux-cuda-120
+            cuda_code: '128'
+          - filter: aarch64-linux-cuda-121
+            cuda_code: '129'
+          - filter: aarch64-linux-cuda-probe
+            cuda_code: '129'
     uses: ./.github/workflows/build-any-cuda.yml
     with:
       filter: ${{ matrix.filter }}
+      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
@@ -443,18 +454,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        filter:
-          - x86_64-linux-cuda-75
-          - x86_64-linux-cuda-80
-          - x86_64-linux-cuda-86
-          - x86_64-linux-cuda-89
-          - x86_64-linux-cuda-90
-          - x86_64-linux-cuda-100
-          - x86_64-linux-cuda-120
-          - x86_64-linux-cuda-probe
+        include:
+          - filter: x86_64-linux-cuda-75
+            cuda_code: '128'
+          - filter: x86_64-linux-cuda-80
+            cuda_code: '128'
+          - filter: x86_64-linux-cuda-86
+            cuda_code: '128'
+          - filter: x86_64-linux-cuda-89
+            cuda_code: '128'
+          - filter: x86_64-linux-cuda-90
+            cuda_code: '128'
+          - filter: x86_64-linux-cuda-100
+            cuda_code: '128'
+          - filter: x86_64-linux-cuda-120
+            cuda_code: '128'
+          - filter: x86_64-linux-cuda-121
+            cuda_code: '129'
+          - filter: x86_64-linux-cuda-probe
+            cuda_code: '129'
     uses: ./.github/workflows/build-any-cuda.yml
     with:
       filter: ${{ matrix.filter }}
+      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}

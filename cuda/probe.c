@@ -5,6 +5,10 @@
 #error "Please define PROBE_ARCH"
 #endif
 
+#ifndef PROBE_VERSION
+#error "Please define PROBE_VERSION"
+#endif
+
 #ifdef __linux__
 #include <sys/epoll.h>
 #endif
@@ -20,6 +24,8 @@ main(void)
 
     int arch[] = { PROBE_ARCH };
     int n_arch = sizeof(arch) / sizeof(arch[0]);
+
+    int version[] = { PROBE_VERSION };
 
     int driver = 0;
 
@@ -52,7 +58,8 @@ main(void)
 
         for (int j = 0; j < n_arch; j++) {
             int a = arch[j];
-            if (a <= device_arch && a > best_arch &&
+            int need = (version[j] / 10) * 1000 + (version[j] % 10) * 10;
+            if (driver >= need && a <= device_arch && a > best_arch &&
                 (a / 10 == device_arch / 10 || a == last_arch)) // keep major
                 best_arch = a;
         }
