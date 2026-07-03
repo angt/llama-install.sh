@@ -58,7 +58,16 @@ ROCM_ARCHS = [
     "1150", "1151", "1152", "1153",
     "1200", "1201"
 ]
-CUDA_ARCHS = ["75", "80", "86", "89", "90", "100", "120"]
+CUDA_ARCHS = {
+    "75":  "128",
+    "80":  "128",
+    "86":  "128",
+    "89":  "128",
+    "90":  "128",
+    "100": "128",
+    "120": "128",
+    "121": "129",
+}
 METAL_ARCHS = {
     "m1":  ("13.3", False, None),
     "m2":  ("13.3", False, None),
@@ -335,11 +344,12 @@ def generate_x86_64_linux_rocm_probe_preset():
 
 def generate_linux_cuda_presets(arch):
     configs = []
-    for cuda_arch in CUDA_ARCHS:
+    last_arch = next(reversed(CUDA_ARCHS))
+    for cuda_arch in list(CUDA_ARCHS):
         cache = {
             "GGML_CUDA": "ON",
             "GGML_STATIC": "ON",
-            "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == CUDA_ARCHS[-1] else f"{cuda_arch}-real",
+            "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
             "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
             "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include",
         }
@@ -359,6 +369,7 @@ def generate_linux_cuda_probe_preset(arch):
     cache = {
         "LLAMA_INSTALL_PROBE": "cuda",
         "LLAMA_INSTALL_PROBE_ARCHS": ",".join(CUDA_ARCHS),
+        "LLAMA_INSTALL_PROBE_VERSIONS": ",".join(CUDA_ARCHS.values()),
         "CMAKE_CUDA_ARCHITECTURES": ";".join(CUDA_ARCHS), # useless
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include",
@@ -526,21 +537,30 @@ def generate_jobs(workflow_presets):
         group = f"{parts[0]}-{parts[1]}-{parts[2]}"
         groups[group].append(preset["name"])
 
+    probe_code = max(CUDA_ARCHS.values())
+
     jobs = {}
     for group, filters in groups.items():
         backend = group.split("-")[2]
+        matrix = {"filter": filters}
+        extra = {}
+        if backend == "cuda":
+            matrix = {"include": [
+                {"filter": f, "cuda_code": CUDA_ARCHS.get(f.rsplit("-", 1)[-1], probe_code)}
+                for f in filters
+            ]}
+            extra = {"cuda_code": "${{ matrix.cuda_code }}"}
         jobs[group] = {
             "name": "${{ matrix.filter }}",
             "needs": ["init"],
             "strategy": {
                 "fail-fast": False,
-                "matrix": {
-                    "filter": filters
-                }
+                "matrix": matrix
             },
             "uses": f"./.github/workflows/build-any-{backend}.yml",
             "with": {
                 "filter": "${{ matrix.filter }}",
+                **extra,
                 "deploy": True,
                 "llamacpp_version": "${{ needs.init.outputs.llamacpp_version }}",
                 "boringssl_version": "${{ needs.init.outputs.boringssl_version }}",

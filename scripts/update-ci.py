@@ -1,9 +1,10 @@
-import json, re
+import json, re, os, sys
 from urllib.request import urlopen
 from pathlib import Path
 from ruamel.yaml import YAML
 
-CUDA_MAJOR = "12.8"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import generate
 
 updates = {}
 
@@ -17,7 +18,10 @@ with urlopen("https://rocm.nightlies.amd.com/whl-multi-arch/rocm/") as r:
     updates["ROCM_VERSION"] = sorted(re.findall(r'rocm-(\d+\.\d+\.\d+a\d+)\.tar\.gz', r.read().decode()))[-1]
 
 with urlopen("https://developer.download.nvidia.com/compute/cuda/redist/") as r:
-    updates["CUDA_VERSION"] = max(re.findall(rf'redistrib_({CUDA_MAJOR}\.[0-9.]+)\.json', r.read().decode()), key=lambda v: [*map(int, v.split('.'))])
+    index = r.read().decode()
+for code in sorted(set(generate.CUDA_ARCHS.values())):
+    major = f"{code[:-1]}.{code[-1]}"
+    updates[f"CUDA_VERSION_{code}"] = max(re.findall(rf'redistrib_({major}\.[0-9.]+)\.json', index), key=lambda v: [*map(int, v.split('.'))])
 
 for key, value in updates.items():
     print(f" - {key}: {value}")
