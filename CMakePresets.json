@@ -2786,6 +2786,7 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "75-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2802,6 +2803,7 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "80-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2818,6 +2820,7 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "86-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2834,6 +2837,7 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "89-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2850,6 +2854,7 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "90-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2866,6 +2871,7 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "100-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2882,6 +2888,7 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "120-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2898,6 +2905,7 @@
         "LLAMA_INSTALL_ARCH": "aarch64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "121",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2931,6 +2939,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "75-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2947,6 +2956,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "80-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2963,6 +2973,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "86-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2979,6 +2990,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "89-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -2995,6 +3007,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "90-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -3011,6 +3024,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "100-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -3027,6 +3041,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "120-real",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
@@ -3043,6 +3058,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_CUDA": "ON",
         "GGML_STATIC": "ON",
+        "GGML_CUDA_DRIVER_DLOPEN": "ON",
         "CMAKE_CUDA_ARCHITECTURES": "121",
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include"
