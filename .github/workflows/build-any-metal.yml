@@ -32,6 +32,7 @@ jobs:
           LLAMACPP_VERSION: ${{ inputs.llamacpp_version }}
           BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
           BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
         run: cmake -DFILTER=${{ inputs.filter }} -P build.cmake
 
       - name: Deploy
