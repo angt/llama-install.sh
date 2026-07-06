@@ -62,6 +62,7 @@ set(LLAMA_BUILD_COMMON    ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_TOOLS     ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_SERVER    ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_APP       ON  CACHE BOOL "" FORCE)
+set(LLAMA_BUILD_UI        OFF CACHE BOOL "" FORCE)
 
 # LibreSSL is supported as an alternative SSL backend in this cross Zig
 # pipeline. It needs a few knobs to build cleanly when selected with
