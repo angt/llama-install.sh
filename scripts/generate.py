@@ -349,6 +349,7 @@ def generate_linux_cuda_presets(arch):
         cache = {
             "GGML_CUDA": "ON",
             "GGML_STATIC": "ON",
+            "GGML_CUDA_DRIVER_DLOPEN" : "ON",
             "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
             "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
             "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include",
