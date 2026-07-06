@@ -41,8 +41,8 @@ FetchDep(boringssl
 )
 
 FetchDep(llamacpp
-    "https://github.com/ggml-org/llama.cpp"
-    "master"
+    "https://github.com/angt/llama.cpp"
+    "ggml-add-ggml_cuda_driver_dlopen-to-avoid-linking-directly-with-cuda_driver"
 )
 
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
