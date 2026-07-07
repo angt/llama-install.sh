@@ -33,7 +33,7 @@ jobs:
           BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
           BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
-        run: cmake -DFILTER=${{ inputs.filter }} -P build.cmake
+        run: cmake --workflow --preset ${{ inputs.filter }}
 
       - name: Deploy
         if: ${{ inputs.deploy && vars.HF_REPO != '' }}
