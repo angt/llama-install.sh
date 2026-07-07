@@ -562,6 +562,7 @@ def generate_jobs(workflow_presets):
                 "filter": "${{ matrix.filter }}",
                 **extra,
                 "deploy": True,
+                "llamacpp_repo": "${{ inputs.llamacpp_repo }}",
                 "llamacpp_version": "${{ needs.init.outputs.llamacpp_version }}",
                 "boringssl_version": "${{ needs.init.outputs.boringssl_version }}",
             },

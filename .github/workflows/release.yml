@@ -2,6 +2,10 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
+      llamacpp_repo:
+        required: false
+        default: ''
+        type: string
       llamacpp_version:
         required: false
         default: ''
@@ -65,6 +69,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -110,6 +115,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -139,6 +145,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -184,6 +191,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -213,6 +221,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -258,6 +267,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -288,6 +298,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -334,6 +345,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -364,6 +376,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -410,6 +423,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -444,6 +458,7 @@ jobs:
       filter: ${{ matrix.filter }}
       cuda_code: ${{ matrix.cuda_code }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -478,6 +493,7 @@ jobs:
       filter: ${{ matrix.filter }}
       cuda_code: ${{ matrix.cuda_code }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -512,6 +528,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
@@ -533,6 +550,7 @@ jobs:
     with:
       filter: ${{ matrix.filter }}
       deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
