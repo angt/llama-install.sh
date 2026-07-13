@@ -145,6 +145,14 @@ main() {
 		return
 	fi
 
+	VERSION=$(~/.llama-app/llama version 2>/dev/null) || die \
+		"Downloaded llama binary failed to run"
+
+	case "$VERSION" in
+	("$LLAMA_VERSION"-*) ;;
+	(*) die "Version mismatch: expected $LLAMA_VERSION, got $VERSION" ;;
+	esac
+
 	mkdir -p ~/.local/bin &&
 	cp ~/.llama-app/llama ~/.local/bin/llama.tmp &&
 	mv ~/.local/bin/llama.tmp ~/.local/bin/llama || die \

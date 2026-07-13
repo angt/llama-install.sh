@@ -80,6 +80,14 @@ function Main {
         "Installation skipped, SKIP_INSTALL is set"
         return
     }
+    $Version = & "$DIR\llama.exe" version 2>$null
+
+    if ($LASTEXITCODE) {
+        Die "Downloaded llama binary failed to run"
+    }
+    if ("$Version" -notlike "$LLAMA_VERSION-*") {
+        Die "Version mismatch: expected $LLAMA_VERSION, got $Version"
+    }
     if (Test-Path "$INSTALL_DIR\llama.exe") {
         Move-Item "$INSTALL_DIR\llama.exe" "$DIR\llama.exe.old" -Force
     }
