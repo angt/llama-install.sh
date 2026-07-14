@@ -126,11 +126,6 @@ if(LLAMA_INSTALL_PROBE)
 else()
     FetchContent_MakeAvailable(llamacpp)
     set(LLAMA_INSTALL_TARGET "llama-app")
-    # TODO: llvm issue ?
-    set_property(SOURCE "${llamacpp_SOURCE_DIR}/ggml/src/ggml-cpu/amx/mmq.cpp"
-        TARGET_DIRECTORY ggml-cpu
-        APPEND PROPERTY COMPILE_OPTIONS "-fno-unroll-loops"
-    )
 endif()
 
 set(LLAMA_INSTALL_FILE "${LLAMA_INSTALL_DIR}/${LLAMA_INSTALL_TARGET}.zst")
