@@ -14,9 +14,11 @@ endif()
 
 set(CROSS_TARGET "${LLAMA_INSTALL_ARCH}-${LLAMA_INSTALL_OS}-${CROSS_ABI}")
 
-find_program(ZIG zig REQUIRED)
+find_program(ZIG NAMES zig HINTS "${CMAKE_CURRENT_LIST_DIR}/../deps/zig" REQUIRED)
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/zig-cc")
+    file(CREATE_LINK "${ZIG}" "${CMAKE_BINARY_DIR}/zig" SYMBOLIC COPY_ON_ERROR)
+
     execute_process(
         COMMAND ${ZIG} cc "${CMAKE_CURRENT_LIST_DIR}/zig.c" -o "${CMAKE_BINARY_DIR}/zig-cc"
     )
