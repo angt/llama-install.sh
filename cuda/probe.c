@@ -41,6 +41,7 @@ main(void)
         return 3;
 
     int best_arch = 0;
+    int best_version = 0;
     int last_arch = arch[n_arch - 1];
 
     for (int i = 0; i < count; i++) {
@@ -60,13 +61,15 @@ main(void)
             int a = arch[j];
             int need = (version[j] / 10) * 1000 + (version[j] % 10) * 10;
             if (driver >= need && a <= device_arch && a > best_arch &&
-                (a / 10 == device_arch / 10 || a == last_arch)) // keep major
+                (a / 10 == device_arch / 10 || a == last_arch)) {
                 best_arch = a;
+                best_version = version[j];
+            }
         }
     }
     if (!best_arch)
         return 4;
 
-    printf("%d\n", best_arch);
+    printf("%d %d\n", best_arch, best_version);
     return 0;
 }

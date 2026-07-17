@@ -48,6 +48,7 @@ probe_cuda() {
 	dl_bin cuda-probe "$ARCH/$OS/cuda/probe/probe.zst" &&
 	CONFIG=$(./cuda-probe) 2>/dev/null &&
 	printf "Found: %s\n" "$CONFIG" &&
+	CONFIG=${CONFIG%% *} &&
 	dl_bin llama "$ARCH/$OS/cuda/$CONFIG/llama-app.zst"
 }
 
