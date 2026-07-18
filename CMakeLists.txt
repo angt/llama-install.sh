@@ -93,15 +93,24 @@ endif()
 #    -fno-finite-math-only
 #)
 
-add_compile_options(
-    -fmacro-prefix-map=${CMAKE_SOURCE_DIR}/deps/=
-    -ffunction-sections
-    -fdata-sections
-    -fno-ident
-    -g0
-)
+if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    add_compile_options(/Gy /Gw /utf-8)
+else()
+    add_compile_options(
+        -fmacro-prefix-map=${CMAKE_SOURCE_DIR}/deps/=
+        -ffunction-sections
+        -fdata-sections
+        -fno-ident
+        -g0
+    )
+endif()
 
-if(CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
+if(CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
+    add_link_options(-Wl,-dead_strip -Wl,-S)
+elseif(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    add_link_options(/OPT:REF /OPT:ICF)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     add_link_options(-static-libgcc)
     add_link_options(-Wl,--gc-sections -Wl,--strip-all)
     if(NOT ROCM_PATH)
@@ -109,8 +118,6 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     else()
         add_link_options(-Wl,-rpath,/opt/rocm/lib)
     endif()
-elseif(CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
-    add_link_options(-Wl,-dead_strip -Wl,-S)
 else()
     message(WARNING "Unknown compiler: ${CMAKE_C_COMPILER_ID}")
 endif()
