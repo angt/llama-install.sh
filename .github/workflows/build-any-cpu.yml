@@ -30,10 +30,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Setup Zig
-        run: |
-          ZIG="zig-$(uname -m)-linux-$ZIG_VERSION"
-          curl -LsSf "https://zigmirror.com/$ZIG.tar.xz" | tar -Jxf- -C ~
-          sudo ln -sf ~/"$ZIG"/zig /usr/bin/zig
+        run: python scripts/install-zig.py
 
       - name: Build ${{ inputs.filter }}
         env:
