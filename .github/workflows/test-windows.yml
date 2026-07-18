@@ -1,0 +1,33 @@
+name: Test windows
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-windows.yml'
+      - 'scripts/install-zig.py'
+      - 'toolchains/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.filter }}
+    runs-on: windows-2022
+    strategy:
+      fail-fast: false
+      matrix:
+        filter:
+          - x86_64-windows-cpu-kkkkk
+          - x86_64-windows-cpu-krxzq
+    env:
+      ZIG_VERSION: "0.17.0-dev.1387+01b60634c"
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Zig
+        run: python scripts/install-zig.py
+
+      - name: Build ${{ matrix.filter }}
+        run: cmake --workflow --preset ${{ matrix.filter }}
