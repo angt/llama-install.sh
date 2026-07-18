@@ -54,7 +54,11 @@ main(int argc, char **argv)
     args[1] = sub;
     memcpy(args + 2, argv + 1, (size_t)argc * sizeof(*args));
 
+#ifdef _WIN32
+    execv(zig, (const char *const *)args);
+#else
     execv(zig, args);
+#endif
     perror(zig);
     return 1;
 }
