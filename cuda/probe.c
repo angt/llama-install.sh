@@ -13,6 +13,10 @@
 #include <sys/epoll.h>
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 int
 main(void)
 {
@@ -41,7 +45,6 @@ main(void)
         return 3;
 
     int best_arch = 0;
-    int best_version = 0;
     int last_arch = arch[n_arch - 1];
 
     for (int i = 0; i < count; i++) {
@@ -63,13 +66,26 @@ main(void)
             if (driver >= need && a <= device_arch && a > best_arch &&
                 (a / 10 == device_arch / 10 || a == last_arch)) {
                 best_arch = a;
-                best_version = version[j];
             }
         }
     }
     if (!best_arch)
         return 4;
 
-    printf("%d %d\n", best_arch, best_version);
+#ifdef _WIN32
+    int cublas_major = 0;
+
+    if (LoadLibraryW(L"cublas64_13.dll")) {
+        cublas_major = 13;
+    } else if (LoadLibraryW(L"cublas64_12.dll")) {
+        cublas_major = 12;
+    } else {
+        return 5;
+    }
+
+    printf("%d %d\n", best_arch, cublas_major);
+#else
+    printf("%d\n", best_arch);
+#endif
     return 0;
 }

@@ -29,11 +29,23 @@ function Download {
             } else {
                 Invoke-RestMethod "$REPO/$LLAMA_VERSION/$U" -OutFile "$DIR\$FILE" @WebParams
             }
-            return
         } catch {
-            if ($U -eq $URL[-1]) { Die "Failed to download" }
+            if ($U -eq $URL[-1]) { [Console]::Error.WriteLine("Failed to download") }
         }
     }
+}
+
+function ProbeCUDA {
+    if ($env:SKIP_CUDA) { return }
+    "Probing CUDA..."
+    Download "cuda-probe.exe" "$ARCH/windows/cuda/probe/probe.exe.zst"
+    $CONFIG = & "$DIR\cuda-probe.exe" 2>$null
+    if ($LASTEXITCODE) { return }
+    "Found: $CONFIG"
+    $parts  = -split $CONFIG
+    $CONFIG = $parts[0]
+    $MAJOR  = $parts[1]
+    Download "llama.exe" "$ARCH/windows/cuda/$MAJOR/$CONFIG/llama-app.exe.zst"
 }
 
 function ProbeVulkan {
@@ -73,6 +85,7 @@ function Main {
     Remove-Item $DIR -Recurse -Force 2>$null
     New-Item -Path $DIR -Force -ItemType "Directory" | Out-Null
 
+    if (!(Test-Path "$DIR\llama.exe")) { ProbeCUDA   }
     if (!(Test-Path "$DIR\llama.exe")) { ProbeVulkan }
     if (!(Test-Path "$DIR\llama.exe")) { ProbeCPU    }
     if (!(Test-Path "$DIR\llama.exe")) {

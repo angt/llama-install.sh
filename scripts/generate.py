@@ -68,6 +68,8 @@ CUDA_ARCHS = {
     "120": "128",
     "121": "129",
 }
+CUDA_MAJORS = ["12", "13"]
+
 METAL_ARCHS = {
     "m1":  ("13.3", False, None),
     "m2":  ("13.3", False, None),
@@ -259,7 +261,8 @@ def generate_presets(os_name, arch, backend, toolchain, configs):
     workflow = []
 
     for config_name, config_cache in configs:
-        preset_name = f"{arch}-{os_name}-{backend}-{config_name}"
+        name_seg = config_name.replace("/", "-")
+        preset_name = f"{arch}-{os_name}-{backend}-{name_seg}"
         preset_path = f"{arch}/{os_name}/{backend}/{config_name}"
         configure.append({
             "name": preset_name,
@@ -378,6 +381,50 @@ def generate_linux_cuda_probe_preset(arch):
 
     return generate_presets(
         os_name   = 'linux',
+        arch      = arch,
+        backend   = 'cuda',
+        toolchain = 'toolchains/base.cmake',
+        configs   = configs,
+    )
+
+def generate_windows_cuda_presets(arch):
+    configs = []
+    last_arch = next(reversed(CUDA_ARCHS))
+    for major in CUDA_MAJORS:
+        for cuda_arch in list(CUDA_ARCHS):
+            config_name = f"{major}/{cuda_arch}"
+            cache = {
+                "GGML_CUDA": "ON",
+                "GGML_STATIC": "ON",
+                "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
+                "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+                "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include",
+            }
+            configs.append((config_name, cache))
+
+    return generate_presets(
+        os_name   = 'windows',
+        arch      = arch,
+        backend   = 'cuda',
+        toolchain = 'toolchains/base.cmake',
+        configs   = configs,
+    )
+
+def generate_windows_cuda_probe_preset(arch):
+    configs = []
+    name = "probe"
+    cache = {
+        "LLAMA_INSTALL_PROBE": "cuda",
+        "LLAMA_INSTALL_PROBE_ARCHS": ",".join(CUDA_ARCHS),
+        "LLAMA_INSTALL_PROBE_VERSIONS": ",".join(CUDA_ARCHS.values()),
+        "CMAKE_CUDA_ARCHITECTURES": ";".join(CUDA_ARCHS), # useless
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include",
+    }
+    configs.append((name, cache))
+
+    return generate_presets(
+        os_name   = 'windows',
         arch      = arch,
         backend   = 'cuda',
         toolchain = 'toolchains/base.cmake',
@@ -530,6 +577,18 @@ def generate_artefacts(cpu_os_archs):
         })
     return artefacts
 
+def cuda_build_code(major, arch):
+    return str(max(int(major + "0"), int(CUDA_ARCHS[arch])))
+
+def preset_cuda_code(preset_name):
+    parts = preset_name.split("-")
+    if len(parts) >= 5 and parts[3] != "probe":
+        return cuda_build_code(parts[3], parts[4])
+    arch = parts[-1]
+    if arch in CUDA_ARCHS:
+        return CUDA_ARCHS[arch]
+    return max(CUDA_ARCHS.values())  # probe
+
 def generate_jobs(workflow_presets):
     groups = defaultdict(list)
     for preset in workflow_presets:
@@ -546,7 +605,7 @@ def generate_jobs(workflow_presets):
         extra = {}
         if backend == "cuda":
             matrix = {"include": [
-                {"filter": f, "cuda_code": CUDA_ARCHS.get(f.rsplit("-", 1)[-1], probe_code)}
+                {"filter": f, "cuda_code": preset_cuda_code(f)}
                 for f in filters
             ]}
             extra = {"cuda_code": "${{ matrix.cuda_code }}"}
@@ -594,6 +653,8 @@ def main():
           for preset in (generate_linux_cuda_presets(arch),
                          generate_linux_cuda_probe_preset(arch))
         ],
+        generate_windows_cuda_presets('x86_64'),
+        generate_windows_cuda_probe_preset('x86_64'),
         generate_x86_64_linux_rocm_presets(),
         generate_x86_64_linux_rocm_probe_preset(),
         generate_metal_presets(),
