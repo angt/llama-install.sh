@@ -3068,6 +3068,151 @@
       "generator": "Ninja"
     },
     {
+      "name": "x86_64-windows-cuda-75",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/75",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "75-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-windows-cuda-80",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/80",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "80-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-windows-cuda-86",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/86",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "86-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-windows-cuda-89",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/89",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "89-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-windows-cuda-90",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/90",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "90-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-windows-cuda-100",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/100",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "100-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-windows-cuda-120",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/120",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "120-real",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-windows-cuda-121",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/121",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "121",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-windows-cuda-probe",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/probe",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "LLAMA_INSTALL_PROBE": "cuda",
+        "LLAMA_INSTALL_PROBE_ARCHS": "75,80,86,89,90,100,120,121",
+        "LLAMA_INSTALL_PROBE_VERSIONS": "128,128,128,128,128,128,128,129",
+        "CMAKE_CUDA_ARCHITECTURES": "75;80;86;89;90;100;120;121",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
       "name": "x86_64-linux-rocm-gfx906",
       "binaryDir": "build/${presetName}",
       "cacheVariables": {
@@ -5366,6 +5511,78 @@
     {
       "name": "x86_64-linux-cuda-probe",
       "configurePreset": "x86_64-linux-cuda-probe",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-75",
+      "configurePreset": "x86_64-windows-cuda-75",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-80",
+      "configurePreset": "x86_64-windows-cuda-80",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-86",
+      "configurePreset": "x86_64-windows-cuda-86",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-89",
+      "configurePreset": "x86_64-windows-cuda-89",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-90",
+      "configurePreset": "x86_64-windows-cuda-90",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-100",
+      "configurePreset": "x86_64-windows-cuda-100",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-120",
+      "configurePreset": "x86_64-windows-cuda-120",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-121",
+      "configurePreset": "x86_64-windows-cuda-121",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-probe",
+      "configurePreset": "x86_64-windows-cuda-probe",
       "jobs": 0,
       "targets": [
         "llama-install"
@@ -8716,6 +8933,123 @@
         {
           "type": "build",
           "name": "x86_64-linux-cuda-probe"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-75",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-75"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-75"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-80",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-80"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-80"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-86",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-86"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-86"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-89",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-89"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-89"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-90",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-90"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-90"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-100",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-100"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-100"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-120",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-120"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-120"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-121",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-121"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-121"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-probe",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-probe"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-probe"
         }
       ]
     },

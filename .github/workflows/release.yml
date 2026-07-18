@@ -497,6 +497,57 @@ jobs:
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
+  x86_64-windows-cuda:
+    name: ${{ matrix.filter }}
+    needs:
+      - init
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - filter: x86_64-windows-cuda-75
+            cuda_code: '128'
+          - filter: x86_64-windows-cuda-80
+            cuda_code: '128'
+          - filter: x86_64-windows-cuda-86
+            cuda_code: '128'
+          - filter: x86_64-windows-cuda-89
+            cuda_code: '128'
+          - filter: x86_64-windows-cuda-90
+            cuda_code: '128'
+          - filter: x86_64-windows-cuda-100
+            cuda_code: '128'
+          - filter: x86_64-windows-cuda-120
+            cuda_code: '128'
+          - filter: x86_64-windows-cuda-121
+            cuda_code: '129'
+          - filter: x86_64-windows-cuda-probe
+            cuda_code: '129'
+    uses: ./.github/workflows/build-any-cuda.yml
+    with:
+      filter: ${{ matrix.filter }}
+      cuda_code: ${{ matrix.cuda_code }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  x86_64-windows-cuda-deps:
+    name: ${{ matrix.cuda_code }}-deps
+    needs:
+      - init
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cuda_code: '128'
+          - cuda_code: '129'
+    uses: ./.github/workflows/build-cuda-deps.yml
+    with:
+      cuda_code: ${{ matrix.cuda_code }}
+      deploy: true
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+    secrets: inherit
   x86_64-linux-rocm:
     name: ${{ matrix.filter }}
     needs:
@@ -570,8 +621,10 @@ jobs:
       - x86_64-windows-vulkan
       - aarch64-linux-cuda
       - x86_64-linux-cuda
+      - x86_64-windows-cuda
       - x86_64-linux-rocm
       - aarch64-macos-metal
+      - x86_64-windows-cuda-deps
     steps:
       - uses: actions/checkout@v5
 

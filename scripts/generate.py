@@ -384,6 +384,48 @@ def generate_linux_cuda_probe_preset(arch):
         configs   = configs,
     )
 
+def generate_windows_cuda_presets(arch):
+    configs = []
+    last_arch = next(reversed(CUDA_ARCHS))
+    for cuda_arch in list(CUDA_ARCHS):
+        cache = {
+            "GGML_CUDA": "ON",
+            "GGML_STATIC": "ON",
+            "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
+            "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+            "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include",
+        }
+        configs.append((cuda_arch, cache))
+
+    return generate_presets(
+        os_name   = 'windows',
+        arch      = arch,
+        backend   = 'cuda',
+        toolchain = 'toolchains/base.cmake',
+        configs   = configs,
+    )
+
+def generate_windows_cuda_probe_preset(arch):
+    configs = []
+    name = "probe"
+    cache = {
+        "LLAMA_INSTALL_PROBE": "cuda",
+        "LLAMA_INSTALL_PROBE_ARCHS": ",".join(CUDA_ARCHS),
+        "LLAMA_INSTALL_PROBE_VERSIONS": ",".join(CUDA_ARCHS.values()),
+        "CMAKE_CUDA_ARCHITECTURES": ";".join(CUDA_ARCHS), # useless
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include",
+    }
+    configs.append((name, cache))
+
+    return generate_presets(
+        os_name   = 'windows',
+        arch      = arch,
+        backend   = 'cuda',
+        toolchain = 'toolchains/base.cmake',
+        configs   = configs,
+    )
+
 def generate_vulkan_presets(os_name, arch):
     configs = []
     for name, flags in CPU_ARCHS[arch].items():
@@ -571,6 +613,28 @@ def generate_jobs(workflow_presets):
 
     return jobs
 
+def generate_cuda_deps_job():
+    return {
+        "x86_64-windows-cuda-deps": {
+            "name": "${{ matrix.cuda_code }}-deps",
+            "needs": ["init"],
+            "strategy": {
+                "fail-fast": False,
+                "matrix": {"include": [
+                    {"cuda_code": code}
+                    for code in sorted(set(CUDA_ARCHS.values()))
+                ]},
+            },
+            "uses": "./.github/workflows/build-cuda-deps.yml",
+            "with": {
+                "cuda_code": "${{ matrix.cuda_code }}",
+                "deploy": True,
+                "llamacpp_version": "${{ needs.init.outputs.llamacpp_version }}",
+            },
+            "secrets": "inherit",
+        }
+    }
+
 def main():
     download_featcode()
     generate_cpu_archs()
@@ -594,6 +658,8 @@ def main():
           for preset in (generate_linux_cuda_presets(arch),
                          generate_linux_cuda_probe_preset(arch))
         ],
+        generate_windows_cuda_presets('x86_64'),
+        generate_windows_cuda_probe_preset('x86_64'),
         generate_x86_64_linux_rocm_presets(),
         generate_x86_64_linux_rocm_probe_preset(),
         generate_metal_presets(),
@@ -638,11 +704,13 @@ def main():
 
     release_job = release["jobs"]["release"]
     build_jobs = generate_jobs(data.get("workflowPresets", []))
-    release_job["needs"] = ["init"] + list(build_jobs.keys())
+    deps_job = generate_cuda_deps_job()
+    release_job["needs"] = ["init"] + list(build_jobs.keys()) + list(deps_job.keys())
 
     release["jobs"] = {
         **release["jobs"],
         **build_jobs,
+        **deps_job,
         "release": release_job,
     }
     with open(release_path, "w", encoding="utf-8") as f:

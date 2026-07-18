@@ -3,6 +3,8 @@ if (!$LLAMA_BUCKET) { $LLAMA_BUCKET = "ggml-org/install.sh" }
 $REPO = "https://huggingface.co/buckets/$LLAMA_BUCKET/resolve"
 $WebParams = @{}
 
+$CudaDlls = "cublas64_12.dll","cublasLt64_12.dll"
+
 if ($env:HF_TOKEN) {
     $WebParams["Headers"] = @{ "Authorization" = "Bearer $env:HF_TOKEN" }
 }
@@ -34,6 +36,42 @@ function Download {
             if ($U -eq $URL[-1]) { Die "Failed to download" }
         }
     }
+}
+
+function DownloadCudaDeps {
+    param([string]$CODE)
+    $Cached = (Test-Path $CudaSentinel) -and ((Get-Content $CudaSentinel -Raw).Trim() -eq $CODE)
+    foreach ($d in $CudaDlls) { if (-not (Test-Path "$INSTALL_DIR\$d")) { $Cached = $false } }
+    if ($Cached) {
+        "CUDA runtime already cached (code $CODE), reusing"
+        foreach ($d in $CudaDlls) { Copy-Item "$INSTALL_DIR\$d" "$DIR\$d" -Force }
+    } else {
+        "Downloading CUDA runtime (code $CODE)..."
+        foreach ($d in $CudaDlls) { Download "$d" "$ARCH/windows/cuda/deps/$CODE/$d.zst" }
+    }
+    $script:CudaCode = $CODE
+}
+
+function PersistCuda {
+    if (-not $script:CudaCode) { return }
+    foreach ($d in $CudaDlls) {
+        if (Test-Path "$DIR\$d") { Move-Item "$DIR\$d" "$INSTALL_DIR\$d" -Force }
+    }
+    Set-Content -Path $CudaSentinel -Value $script:CudaCode -NoNewline
+}
+
+function ProbeCUDA {
+    if ($env:SKIP_CUDA) { return }
+    "Probing CUDA..."
+    Download "cuda-probe.exe" @("$ARCH/windows/cuda/probe/probe.exe.zst", "$ARCH/windows/cuda/probe/probe.zst")
+    $CONFIG = & "$DIR\cuda-probe.exe" 2>$null
+    if ($LASTEXITCODE) { return }
+    "Found: $CONFIG"
+    $parts  = -split $CONFIG
+    $CONFIG = $parts[0]
+    $SDK    = $parts[1]
+    Download "llama.exe" @("$ARCH/windows/cuda/$CONFIG/llama-app.exe.zst", "$ARCH/windows/cuda/$CONFIG/llama-app.zst")
+    if ($SDK) { DownloadCudaDeps $SDK }
 }
 
 function ProbeVulkan {
@@ -70,9 +108,11 @@ function Main {
 
     $INSTALL_DIR = Join-Path $env:LOCALAPPDATA "Microsoft\WindowsApps"
     $DIR = Join-Path $env:LOCALAPPDATA "llama-app"
+    $CudaSentinel = Join-Path $INSTALL_DIR "cuda-code"
     Remove-Item $DIR -Recurse -Force 2>$null
     New-Item -Path $DIR -Force -ItemType "Directory" | Out-Null
 
+    if (!(Test-Path "$DIR\llama.exe")) { ProbeCUDA   }
     if (!(Test-Path "$DIR\llama.exe")) { ProbeVulkan }
     if (!(Test-Path "$DIR\llama.exe")) { ProbeCPU    }
     if (!(Test-Path "$DIR\llama.exe")) {
@@ -95,6 +135,7 @@ function Main {
         Move-Item "$INSTALL_DIR\llama.exe" "$DIR\llama.exe.old" -Force
     }
     Move-Item "$DIR\llama.exe" "$INSTALL_DIR\llama.exe" -Force
+    PersistCuda
     Remove-Item $DIR -Recurse -Force 2>$null
 
     "Installation completed successfully"

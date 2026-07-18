@@ -4,6 +4,11 @@ if(_arch_count EQUAL 0)
     return()
 endif()
 
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    set(_CUDAToolkit_win_search_dirs "lib/x64")
+    set(_CUDAToolkit_win_stub_search_dirs "lib/x64/stubs")
+endif()
+
 include("${CMAKE_ROOT}/Modules/FindCUDAToolkit.cmake")
 
 if(NOT CUDAToolkit_FOUND)
@@ -17,7 +22,7 @@ endif()
 find_program(_CUDA_NVPRUNE nvprune HINTS ${CUDAToolkit_BIN_DIR})
 
 if(NOT _CUDA_NVPRUNE)
-    message(WARNING "nvprune not found; skipping CUDA static-lib pruning")
+    message(STATUS "nvprune not found; skipping CUDA static-lib pruning")
     return()
 endif()
 
