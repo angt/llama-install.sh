@@ -14,35 +14,38 @@ function Die {
 }
 
 function Download {
-    param($FILE, $URL)
+    param($FILE, [string[]]$URL)
     if (Test-Path "$DIR\$FILE") {
         return
     }
     "Downloading $FILE..."
-    try {
-        if ($URL -like "*.zst") {
-            Download "unzstd.exe" "$ARCH/windows/unzstd.exe"
-            Invoke-RestMethod "$REPO/$LLAMA_VERSION/$URL" -OutFile "$DIR\tmp.zst" @WebParams
-            Start-Process -FilePath "$DIR\unzstd.exe" -RedirectStandardInput "$DIR\tmp.zst" -RedirectStandardOutput "$DIR\$FILE" -NoNewWindow -Wait
-            Remove-Item "$DIR\tmp.zst"
-        } else {
-            Invoke-RestMethod "$REPO/$LLAMA_VERSION/$URL" -OutFile "$DIR\$FILE" @WebParams
+    foreach ($U in $URL) {
+        try {
+            if ($U -like "*.zst") {
+                Download "unzstd.exe" "$ARCH/windows/unzstd.exe"
+                Invoke-RestMethod "$REPO/$LLAMA_VERSION/$U" -OutFile "$DIR\tmp.zst" @WebParams
+                Start-Process -FilePath "$DIR\unzstd.exe" -RedirectStandardInput "$DIR\tmp.zst" -RedirectStandardOutput "$DIR\$FILE" -NoNewWindow -Wait
+                Remove-Item "$DIR\tmp.zst"
+            } else {
+                Invoke-RestMethod "$REPO/$LLAMA_VERSION/$U" -OutFile "$DIR\$FILE" @WebParams
+            }
+            return
+        } catch {
+            if ($U -eq $URL[-1]) { Die "Failed to download" }
         }
-    } catch {
-        Die "Failed to download"
     }
 }
 
 function ProbeVulkan {
     if ($env:SKIP_VULKAN) { return }
     "Probing Vulkan..."
-    Download "vulkan-probe.exe" "$ARCH/windows/vulkan/probe/probe.zst"
+    Download "vulkan-probe.exe" @("$ARCH/windows/vulkan/probe/probe.exe.zst", "$ARCH/windows/vulkan/probe/probe.zst")
     Download "featcode.exe" "$ARCH/windows/featcode.exe"
     & "$DIR\vulkan-probe.exe" 2>$null
     if ($LASTEXITCODE) { return }
     $CONFIG = & "$DIR\featcode.exe" 2>$null
     & "$DIR\featcode.exe" $CONFIG 2>$null | % { "Found: $_" }
-    Download "llama.exe" "$ARCH/windows/vulkan/$CONFIG/llama-app.zst"
+    Download "llama.exe" @("$ARCH/windows/vulkan/$CONFIG/llama-app.exe.zst", "$ARCH/windows/vulkan/$CONFIG/llama-app.zst")
 }
 
 function ProbeCPU {
@@ -50,7 +53,7 @@ function ProbeCPU {
     Download "featcode.exe" "$ARCH/windows/featcode.exe"
     $CONFIG = & "$DIR\featcode.exe" 2>$null
     & "$DIR\featcode.exe" $CONFIG 2>$null | % { "Found: $_" }
-    Download "llama.exe" "$ARCH/windows/cpu/$CONFIG/llama-app.zst"
+    Download "llama.exe" @("$ARCH/windows/cpu/$CONFIG/llama-app.exe.zst", "$ARCH/windows/cpu/$CONFIG/llama-app.zst")
 }
 
 function Main {
