@@ -3213,6 +3213,38 @@
       "generator": "Ninja"
     },
     {
+      "name": "x86_64-windows-cuda-all-128",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/all-128",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "75-real;80-real;86-real;89-real;90-real;100-real;120",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
+      "name": "x86_64-windows-cuda-all-129",
+      "binaryDir": "build/${presetName}",
+      "cacheVariables": {
+        "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/cuda/all-129",
+        "LLAMA_INSTALL_OS": "windows",
+        "LLAMA_INSTALL_ARCH": "x86_64",
+        "GGML_CUDA": "ON",
+        "GGML_STATIC": "ON",
+        "CMAKE_CUDA_ARCHITECTURES": "75-real;80-real;86-real;89-real;90-real;100-real;120-real;121",
+        "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+        "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include"
+      },
+      "toolchainFile": "toolchains/base.cmake",
+      "generator": "Ninja"
+    },
+    {
       "name": "x86_64-linux-rocm-gfx906",
       "binaryDir": "build/${presetName}",
       "cacheVariables": {
@@ -5583,6 +5615,22 @@
     {
       "name": "x86_64-windows-cuda-probe",
       "configurePreset": "x86_64-windows-cuda-probe",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-all-128",
+      "configurePreset": "x86_64-windows-cuda-all-128",
+      "jobs": 0,
+      "targets": [
+        "llama-install"
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-all-129",
+      "configurePreset": "x86_64-windows-cuda-all-129",
       "jobs": 0,
       "targets": [
         "llama-install"
@@ -9050,6 +9098,32 @@
         {
           "type": "build",
           "name": "x86_64-windows-cuda-probe"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-all-128",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-all-128"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-all-128"
+        }
+      ]
+    },
+    {
+      "name": "x86_64-windows-cuda-all-129",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "x86_64-windows-cuda-all-129"
+        },
+        {
+          "type": "build",
+          "name": "x86_64-windows-cuda-all-129"
         }
       ]
     },

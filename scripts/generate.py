@@ -426,6 +426,34 @@ def generate_windows_cuda_probe_preset(arch):
         configs   = configs,
     )
 
+def generate_windows_cuda_all_preset(arch, code):
+    # Experimental: one "fat" binary bundling every arch the given SDK code
+    # can target, to measure the size cost of a multi-arch build vs. the
+    # per-arch builds. Not shipped to the release bucket (generate_jobs
+    # skips the "all-" config); only built by test-windows.yml.
+    archs = [a for a, c in CUDA_ARCHS.items() if int(c) <= int(code)]
+    last = archs[-1]
+    configs = [(
+        f"all-{code}",
+        {
+            "GGML_CUDA": "ON",
+            "GGML_STATIC": "ON",
+            "CMAKE_CUDA_ARCHITECTURES": ";".join(
+                a if a == last else f"{a}-real" for a in archs
+            ),
+            "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+            "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include",
+        },
+    )]
+
+    return generate_presets(
+        os_name   = 'windows',
+        arch      = arch,
+        backend   = 'cuda',
+        toolchain = 'toolchains/base.cmake',
+        configs   = configs,
+    )
+
 def generate_vulkan_presets(os_name, arch):
     configs = []
     for name, flags in CPU_ARCHS[arch].items():
@@ -576,6 +604,8 @@ def generate_jobs(workflow_presets):
     groups = defaultdict(list)
     for preset in workflow_presets:
         parts = preset["name"].split("-")
+        if len(parts) > 3 and parts[3] == "all":
+            continue  # experimental multi-arch presets, not for release
         group = f"{parts[0]}-{parts[1]}-{parts[2]}"
         groups[group].append(preset["name"])
 
@@ -660,6 +690,7 @@ def main():
         ],
         generate_windows_cuda_presets('x86_64'),
         generate_windows_cuda_probe_preset('x86_64'),
+        *[generate_windows_cuda_all_preset('x86_64', code) for code in ("128", "129")],
         generate_x86_64_linux_rocm_presets(),
         generate_x86_64_linux_rocm_probe_preset(),
         generate_metal_presets(),

@@ -24,6 +24,10 @@ jobs:
             cuda_code: '128'
           - filter: x86_64-windows-cuda-probe
             cuda_code: '129'
+          - filter: x86_64-windows-cuda-all-128
+            cuda_code: '128'
+          - filter: x86_64-windows-cuda-all-129
+            cuda_code: '129'
     uses: ./.github/workflows/build-any-cuda.yml
     with:
       filter: ${{ matrix.filter }}
