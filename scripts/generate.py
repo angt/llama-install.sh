@@ -68,6 +68,23 @@ CUDA_ARCHS = {
     "120": "128",
     "121": "129",
 }
+# System-cublas majors we ship a per-arch family for. The windows installer
+# probes which cublas64_<major>.dll is present on the user's machine and
+# downloads the matching family -- a 12.x-built exe imports cublas64_12.dll,
+# a 13.x-built exe imports cublas64_13.dll, and the two filenames cannot
+# cross-bind. Adding "14" here (and a CUDA_BUILD_TOOLKIT row per arch) is
+# enough to ship a 14.x family later.
+CUDA_MAJORS = ["12", "13"]
+# (major, arch) -> toolkit code to BUILD that family/arch variant with.
+# "12": CUDA_ARCHS[arch] (the lowest introducing minor -- its SASS ships in
+#       every higher 12.x cublas, so a binary built against it runs against
+#       any 12.x system cublas).
+# "13": "130" for every arch (13.0 nvcc accepts all these archs and 13.0+
+#       cublasLt carries their SASS -- see scripts/cuda-arch-coverage.json).
+CUDA_BUILD_TOOLKIT = {
+    **{("12", a): c for a, c in CUDA_ARCHS.items()},
+    **{("13", a): "130" for a in CUDA_ARCHS},
+}
 METAL_ARCHS = {
     "m1":  ("13.3", False, None),
     "m2":  ("13.3", False, None),
@@ -259,7 +276,12 @@ def generate_presets(os_name, arch, backend, toolchain, configs):
     workflow = []
 
     for config_name, config_cache in configs:
-        preset_name = f"{arch}-{os_name}-{backend}-{config_name}"
+        # config_name may contain "/" to denote a nested path segment (e.g.
+        # "12/89"); each "/" becomes a "-" in the preset name and a "/" in the
+        # install dir, preserving the repo's 1:1 preset-name <-> path mapping
+        # (e.g. x86_64-windows-cuda-12-89  <->  x86_64/windows/cuda/12/89).
+        name_seg = config_name.replace("/", "-")
+        preset_name = f"{arch}-{os_name}-{backend}-{name_seg}"
         preset_path = f"{arch}/{os_name}/{backend}/{config_name}"
         configure.append({
             "name": preset_name,
@@ -384,18 +406,33 @@ def generate_linux_cuda_probe_preset(arch):
         configs   = configs,
     )
 
+def _cuda_major(cuda_code):
+    # "128" -> "12", "129" -> "12", "130" -> "13". Kept for callers that
+    # derive the cublas major from a toolkit code (e.g. update-ci.py).
+    return cuda_code[:-1]
+
+
 def generate_windows_cuda_presets(arch):
     configs = []
     last_arch = next(reversed(CUDA_ARCHS))
-    for cuda_arch in list(CUDA_ARCHS):
-        cache = {
-            "GGML_CUDA": "ON",
-            "GGML_STATIC": "ON",
-            "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
-            "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
-            "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include",
-        }
-        configs.append((cuda_arch, cache))
+    # One preset per (cublas_major, arch). The major is the asset-name
+    # segment and the build-toolchain detail (which nvcc minor to use) comes
+    # from CUDA_BUILD_TOOLKIT[(major, arch)].
+    for major in CUDA_MAJORS:
+        for cuda_arch in list(CUDA_ARCHS):
+            # config_name uses "/" so generate_presets maps it to a nested
+            # path segment (x86_64/windows/cuda/12/89) while the preset name
+            # keeps the 1:1 dash<->slash convention
+            # (x86_64-windows-cuda-12-89).
+            config_name = f"{major}/{cuda_arch}"  # e.g. "12/89", "13/121"
+            cache = {
+                "GGML_CUDA": "ON",
+                "GGML_STATIC": "ON",
+                "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
+                "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
+                "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include",
+            }
+            configs.append((config_name, cache))
 
     return generate_presets(
         os_name   = 'windows',
@@ -600,6 +637,32 @@ def generate_artefacts(cpu_os_archs):
         })
     return artefacts
 
+def preset_cuda_code(preset_name):
+    """Derive the toolkit code to BUILD a cuda preset variant with.
+
+    Names:
+      x86_64-windows-cuda-12-89  -> CUDA_BUILD_TOOLKIT[("12","89")] = "128"
+      x86_64-windows-cuda-13-89  -> CUDA_BUILD_TOOLKIT[("13","89")] = "130"
+      x86_64-linux-cuda-89      -> CUDA_ARCHS["89"] = "128" (linux: one per arch)
+      x86_64-windows-cuda-probe  -> probe_code (highest, for the probe build)
+      x86_64-windows-cuda-all-128 -> "128" (experimental; code is the last token)
+    """
+    parts = preset_name.split("-")
+    # Form: <arch>-<os>-cuda-<major>-<cuda_arch>  (windows per-major family)
+    if len(parts) >= 5 and parts[3] not in ("probe", "all"):
+        code = CUDA_BUILD_TOOLKIT.get((parts[3], parts[4]))
+        if code:
+            return code
+    # Experimental "all-<code>" carries the code in the last token.
+    if parts[-1] in CUDA_ARCHS.values() or parts[-1] in CUDA_BUILD_TOOLKIT.values():
+        return parts[-1]
+    # Linux per-arch presets or anything else: look the arch up in CUDA_ARCHS.
+    arch = parts[-1]
+    if arch in CUDA_ARCHS:
+        return CUDA_ARCHS[arch]
+    return max(CUDA_ARCHS.values())  # probe
+
+
 def generate_jobs(workflow_presets):
     groups = defaultdict(list)
     for preset in workflow_presets:
@@ -618,7 +681,7 @@ def generate_jobs(workflow_presets):
         extra = {}
         if backend == "cuda":
             matrix = {"include": [
-                {"filter": f, "cuda_code": CUDA_ARCHS.get(f.rsplit("-", 1)[-1], probe_code)}
+                {"filter": f, "cuda_code": preset_cuda_code(f)}
                 for f in filters
             ]}
             extra = {"cuda_code": "${{ matrix.cuda_code }}"}
@@ -642,28 +705,6 @@ def generate_jobs(workflow_presets):
         }
 
     return jobs
-
-def generate_cuda_deps_job():
-    return {
-        "x86_64-windows-cuda-deps": {
-            "name": "${{ matrix.cuda_code }}-deps",
-            "needs": ["init"],
-            "strategy": {
-                "fail-fast": False,
-                "matrix": {"include": [
-                    {"cuda_code": code}
-                    for code in sorted(set(CUDA_ARCHS.values()))
-                ]},
-            },
-            "uses": "./.github/workflows/build-cuda-deps.yml",
-            "with": {
-                "cuda_code": "${{ matrix.cuda_code }}",
-                "deploy": True,
-                "llamacpp_version": "${{ needs.init.outputs.llamacpp_version }}",
-            },
-            "secrets": "inherit",
-        }
-    }
 
 def main():
     download_featcode()
@@ -735,13 +776,11 @@ def main():
 
     release_job = release["jobs"]["release"]
     build_jobs = generate_jobs(data.get("workflowPresets", []))
-    deps_job = generate_cuda_deps_job()
-    release_job["needs"] = ["init"] + list(build_jobs.keys()) + list(deps_job.keys())
+    release_job["needs"] = ["init"] + list(build_jobs.keys())
 
     release["jobs"] = {
         **release["jobs"],
         **build_jobs,
-        **deps_job,
         "release": release_job,
     }
     with open(release_path, "w", encoding="utf-8") as f:

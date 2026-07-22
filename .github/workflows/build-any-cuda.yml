@@ -29,6 +29,7 @@ jobs:
     env:
       CUDA_VERSION_128: "12.8.2"
       CUDA_VERSION_129: "12.9.2"
+      CUDA_VERSION_130: "13.0.3"
     steps:
       - uses: actions/checkout@v5
 

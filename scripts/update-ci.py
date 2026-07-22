@@ -19,7 +19,8 @@ with urlopen("https://rocm.nightlies.amd.com/whl-multi-arch/rocm/") as r:
 
 with urlopen("https://developer.download.nvidia.com/compute/cuda/redist/") as r:
     index = r.read().decode()
-for code in sorted(set(generate.CUDA_ARCHS.values())):
+
+for code in sorted(set(generate.CUDA_ARCHS.values()) | set(generate.CUDA_BUILD_TOOLKIT.values())):
     major = f"{code[:-1]}.{code[-1]}"
     updates[f"CUDA_VERSION_{code}"] = max(re.findall(rf'redistrib_({major}\.[0-9.]+)\.json', index), key=lambda v: [*map(int, v.split('.'))])
 
