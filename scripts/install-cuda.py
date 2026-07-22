@@ -76,6 +76,9 @@ def collect_tasks(manifest, target_plat, host_plat, target_os):
     if "cuda_crt" in manifest:
         add("cuda_crt", target_plat)
 
+    if "libnvvm" in manifest:
+        add("libnvvm", host_plat)
+
     add("cuda_nvcc", host_plat)
 
     if target_os == "linux":
