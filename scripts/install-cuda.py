@@ -73,6 +73,9 @@ def collect_tasks(manifest, target_plat, host_plat, target_os):
     for c in TARGET_COMPONENTS:
         add(c, target_plat)
 
+    if "cuda_crt" in manifest:
+        add("cuda_crt", target_plat)
+
     add("cuda_nvcc", host_plat)
 
     if target_os == "linux":
