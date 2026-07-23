@@ -16,29 +16,31 @@ function Die {
 function Download {
     param($FILE, [string[]]$URL)
     if (Test-Path "$DIR\$FILE") {
-        return
+        return $true
     }
     "Downloading $FILE..."
     foreach ($U in $URL) {
         try {
             if ($U -like "*.zst") {
-                Download "unzstd.exe" "$ARCH/windows/unzstd.exe"
+                if (!(Download "unzstd.exe" "$ARCH/windows/unzstd.exe")) { return $false }
                 Invoke-RestMethod "$REPO/$LLAMA_VERSION/$U" -OutFile "$DIR\tmp.zst" @WebParams
                 Start-Process -FilePath "$DIR\unzstd.exe" -RedirectStandardInput "$DIR\tmp.zst" -RedirectStandardOutput "$DIR\$FILE" -NoNewWindow -Wait
                 Remove-Item "$DIR\tmp.zst"
             } else {
                 Invoke-RestMethod "$REPO/$LLAMA_VERSION/$U" -OutFile "$DIR\$FILE" @WebParams
             }
+            return $true
         } catch {
             if ($U -eq $URL[-1]) { [Console]::Error.WriteLine("Failed to download") }
         }
     }
+    return $false
 }
 
 function ProbeCUDA {
     if ($env:SKIP_CUDA) { return }
     "Probing CUDA..."
-    Download "cuda-probe.exe" "$ARCH/windows/cuda/probe/probe.exe.zst"
+    if (!(Download "cuda-probe.exe" "$ARCH/windows/cuda/probe/probe.exe.zst")) { return }
     $CONFIG = & "$DIR\cuda-probe.exe" 2>$null
     if ($LASTEXITCODE) { return }
     "Found: $CONFIG"
@@ -51,8 +53,8 @@ function ProbeCUDA {
 function ProbeVulkan {
     if ($env:SKIP_VULKAN) { return }
     "Probing Vulkan..."
-    Download "vulkan-probe.exe" @("$ARCH/windows/vulkan/probe/probe.exe.zst", "$ARCH/windows/vulkan/probe/probe.zst")
-    Download "featcode.exe" "$ARCH/windows/featcode.exe"
+    if (!(Download "vulkan-probe.exe" @("$ARCH/windows/vulkan/probe/probe.exe.zst", "$ARCH/windows/vulkan/probe/probe.zst"))) { return }
+    if (!(Download "featcode.exe" "$ARCH/windows/featcode.exe")) { return }
     & "$DIR\vulkan-probe.exe" 2>$null
     if ($LASTEXITCODE) { return }
     $CONFIG = & "$DIR\featcode.exe" 2>$null
@@ -62,7 +64,7 @@ function ProbeVulkan {
 
 function ProbeCPU {
     "Probing CPU..."
-    Download "featcode.exe" "$ARCH/windows/featcode.exe"
+    if (!(Download "featcode.exe" "$ARCH/windows/featcode.exe")) { return }
     $CONFIG = & "$DIR\featcode.exe" 2>$null
     & "$DIR\featcode.exe" $CONFIG 2>$null | % { "Found: $_" }
     Download "llama.exe" @("$ARCH/windows/cpu/$CONFIG/llama-app.exe.zst", "$ARCH/windows/cpu/$CONFIG/llama-app.zst")
