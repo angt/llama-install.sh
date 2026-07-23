@@ -29,7 +29,7 @@ jobs:
         run: |
           if [ "${{ inputs.llamacpp_version }}" ]
           then LLAMACPP_VERSION="${{ inputs.llamacpp_version }}"
-          else LLAMACPP_VERSION=$(git ls-remote --tags https://github.com/ggml-org/llama.cpp | sed -nE 's,.*/tags/(b[0-9]+)$,\1,p' | sort -V | tail -n 1)
+          else LLAMACPP_VERSION=$(curl -fsSL https://api.github.com/repos/ggml-org/llama.cpp/releases/latest | python3 -c 'import sys,json; print(json.load(sys.stdin)["tag_name"])')
           fi
           BORINGSSL_VERSION=$(git ls-remote --tags https://boringssl.googlesource.com/boringssl | sed -nE 's,.*/tags/(0\.[0-9]+\.0)$,\1,p' | sort | tail -n 1)
           if [ "${{ github.event_name }}" = "schedule" ]
