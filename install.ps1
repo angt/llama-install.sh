@@ -18,7 +18,7 @@ function Download {
     if (Test-Path "$DIR\$FILE") {
         return $true
     }
-    "Downloading $FILE..."
+    Write-Host "Downloading $FILE..."
     foreach ($U in $URL) {
         try {
             if ($U -like "*.zst") {
@@ -29,7 +29,7 @@ function Download {
             } else {
                 Invoke-RestMethod "$REPO/$LLAMA_VERSION/$U" -OutFile "$DIR\$FILE" @WebParams
             }
-            return $true
+            if (Test-Path "$DIR\$FILE") { return $true }
         } catch {
             if ($U -eq $URL[-1]) { [Console]::Error.WriteLine("Failed to download") }
         }
