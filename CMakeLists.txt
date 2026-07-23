@@ -129,18 +129,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/cuda/stub.cmake")
 
 add_compile_definitions(LLAMA_INSTALL_BUILD=1)
 
-# Use custom LLAMA_UI_HF_BUCKET if possible
-if(DEFINED ENV{HF_REPO} AND NOT "$ENV{HF_REPO}" STREQUAL "")
-    file(DOWNLOAD
-        "https://huggingface.co/buckets/$ENV{HF_REPO}/resolve/${LLAMACPP_VERSION}/dist.tar.gz.sha256"
-        "${CMAKE_BINARY_DIR}/.ui-probe.sha256"
-        STATUS _ui_probe_status TIMEOUT 30 QUIET)
-    list(GET _ui_probe_status 0 _ui_probe_rc)
-    if(_ui_probe_rc EQUAL 0)
-        set(LLAMA_UI_HF_BUCKET "$ENV{HF_REPO}" CACHE STRING "" FORCE)
-    endif()
-endif()
-
 if(LLAMA_INSTALL_PROBE)
     add_subdirectory(${LLAMA_INSTALL_PROBE})
     set(LLAMA_INSTALL_TARGET "probe")
