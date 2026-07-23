@@ -1,27 +1,32 @@
-import sys
-import os
+import io
 import json
-import time
-from urllib.request import urlopen
-import tarfile
-import shutil
+import os
 import platform
-from pathlib import Path
+import shutil
+import sys
+import tarfile
+import time
+import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import wraps
+from pathlib import Path
+from urllib.request import urlopen
+
+VERSION = os.getenv("CUDA_VERSION", "12.8.2")
+URL = "https://developer.download.nvidia.com/compute/cuda/redist"
 
 ROOT = Path.cwd() / "deps" / "cuda"
 DEST = ROOT.with_suffix(".tmp")
 
-VERSION = os.getenv("CUDA_VERSION", "12.8.2")
-URL = "https://developer.download.nvidia.com/compute/cuda/redist"
 COMPONENTS = [
-    "libcublas",
-    "cuda_cudart",
-    "cuda_nvcc",
-    "cuda_cccl",
-    "cuda_nvprune",
-    "cuda_cuobjdump",
+    ("libcublas",      "target", None),
+    ("cuda_cudart",    "target", None),
+    ("cuda_cccl",      "target", None),
+    ("cuda_crt",       "target", lambda manifest, t: "cuda_crt" in manifest),
+    ("libnvvm",        "host",   lambda manifest, t: "libnvvm" in manifest),
+    ("cuda_nvcc",      "host",   None),
+    ("cuda_nvprune",   "host",   lambda manifest, t: t == "linux"),
+    ("cuda_cuobjdump", "host",   lambda manifest, t: t == "linux"),
 ]
 
 def retry(func):
@@ -38,61 +43,112 @@ def retry(func):
 
 def detect_arch():
     machine = platform.machine().lower()
-    if machine in ["x86_64", "amd64"]:
+    if machine in ("x86_64", "amd64"):
         return "x86_64"
-    if machine in ["aarch64", "arm64"]:
+    if machine in ("aarch64", "arm64"):
         return "aarch64"
     return machine
 
-@retry
-def install(args):
-    name, file = args
+def detect_os():
+    system = platform.system().lower()
+    return {"darwin": "macos"}.get(system, system)
 
-    def members(tar):
-        for member in tar:
-            parts = Path(member.name).parts
-            if len(parts) > 1:
-                member.name = str(Path(*parts[1:]))
-                yield member
+def platform_key(arch, os_name):
+    if os_name == "linux":
+        return {"x86_64": "linux-x86_64", "aarch64": "linux-sbsa"}[arch]
 
-    with urlopen(f"{URL}/{file}", timeout=60) as r:
-        with tarfile.open(fileobj=r, mode="r|*") as tar:
-            tar.extractall(DEST, members=members(tar), filter='tar')
+    if os_name == "windows":
+        if arch != "x86_64":
+            sys.exit(f"No Windows CUDA redist for {arch}")
+        return "windows-x86_64"
 
-    return f" - {name}"
+    sys.exit(f"Unsupported OS: {os_name}")
+
+def strip_top(path):
+    parts = Path(path).parts
+    return str(Path(*parts[1:])) if len(parts) > 1 else ""
+
+def _extract_zip(data, dest):
+    with zipfile.ZipFile(io.BytesIO(data)) as z:
+        for member in z.infolist():
+            rel = strip_top(member.filename)
+            if not rel or member.is_dir():
+                continue
+            target = dest / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with z.open(member) as src, open(target, "wb") as dst:
+                shutil.copyfileobj(src, dst)
+
+def _extract_tar(data, dest):
+    with tarfile.open(fileobj=io.BytesIO(data), mode="r:*") as tar:
+        members = []
+        for member in tar.getmembers():
+            rel = strip_top(member.name)
+            if not rel:
+                continue
+            member.name = rel
+            members.append(member)
+        tar.extractall(dest, members=members, filter="tar")
+
+def make_task(manifest, component, plat):
+    data = manifest[component]
+    label = f"{data['name']} version {data['version']} ({plat})"
+    return (label, data[plat]["relative_path"])
+
+def collect_tasks(manifest, target_plat, host_plat, target_os):
+    tasks = []
+    for name, which, gate in COMPONENTS:
+        if gate is not None and not gate(manifest, target_os):
+            continue
+        plat = target_plat if which == "target" else host_plat
+        tasks.append(make_task(manifest, name, plat))
+    return tasks
 
 @retry
 def download_manifest():
     with urlopen(f"{URL}/redistrib_{VERSION}.json", timeout=60) as r:
         return json.load(r)
 
+@retry
+def install_component(name, file):
+    with urlopen(f"{URL}/{file}", timeout=120) as r:
+        data = r.read()
+
+    if file.endswith(".zip"):
+        _extract_zip(data, DEST)
+    else:
+        _extract_tar(data, DEST)
+
+    return f" - {name}"
+
 def main():
     arch = sys.argv[1] if len(sys.argv) >= 2 else detect_arch()
-    arch_map = {
-        "x86_64": "linux-x86_64",
-        "aarch64": "linux-sbsa"
-    }
-    platform_key = arch_map.get(arch)
+    target_os = sys.argv[2] if len(sys.argv) >= 3 else os.getenv("CUDA_TARGET_OS", detect_os())
+
+    host_os = detect_os()
+    host_plat = platform_key(arch, host_os)
+    target_plat = platform_key(arch, target_os)
+
+    cross = host_os != target_os
+    print(f"Installing CUDA {VERSION} (arch={arch}, target={target_os}"
+          f"{f', host={host_os}' if cross else ''})...")
+
+    manifest = download_manifest()
+    tasks = collect_tasks(manifest, target_plat, host_plat, target_os)
 
     shutil.rmtree(DEST, ignore_errors=True)
     DEST.mkdir(parents=True)
 
-    print(f"Installing CUDA {VERSION} ({platform_key})...")
-    manifest = download_manifest()
-
-    tasks = []
-    for c in COMPONENTS:
-        data = manifest[c]
-        name = f"{data['name']} version {data['version']}"
-        tasks.append((name, data[platform_key]["relative_path"]))
-
     with ThreadPoolExecutor(2) as pool:
-        futures = [pool.submit(install, task) for task in tasks]
+        futures = [pool.submit(install_component, name, file) for name, file in tasks]
         for f in as_completed(futures):
             print(f.result())
 
     DEST.rename(ROOT)
-    (ROOT / "lib64").symlink_to("lib")
+
+    if target_os == "linux":
+        (ROOT / "lib64").symlink_to("lib")
+
 
 if __name__ == "__main__":
     main()
