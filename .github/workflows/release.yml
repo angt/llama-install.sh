@@ -29,7 +29,7 @@ jobs:
         run: |
           if [ "${{ inputs.llamacpp_version }}" ]
           then LLAMACPP_VERSION="${{ inputs.llamacpp_version }}"
-          else LLAMACPP_VERSION=$(git ls-remote --tags https://github.com/ggml-org/llama.cpp | sed -nE 's,.*/tags/(b[0-9]+)$,\1,p' | sort -V | tail -n 1)
+          else LLAMACPP_VERSION=$(curl -fsSL https://api.github.com/repos/ggml-org/llama.cpp/releases/latest | python3 -c 'import sys,json; print(json.load(sys.stdin)["tag_name"])')
           fi
           BORINGSSL_VERSION=$(git ls-remote --tags https://boringssl.googlesource.com/boringssl | sed -nE 's,.*/tags/(0\.[0-9]+\.0)$,\1,p' | sort | tail -n 1)
           if [ "${{ github.event_name }}" = "schedule" ]
@@ -42,47 +42,6 @@ jobs:
           write_latest=$WRITE_LATEST
           EOF
           grep _version= "$GITHUB_OUTPUT"
-
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Fetch llama.cpp source
-        env:
-          LLAMACPP_REPO: ${{ inputs.llamacpp_repo }}
-        run: |
-          REPO="${LLAMACPP_REPO:-https://github.com/ggml-org/llama.cpp}"
-          git clone --depth 1 --branch "${{ steps.tags.outputs.llamacpp_version }}" "$REPO" deps/llamacpp
-
-      - name: Setup Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: "24"
-          cache: npm
-          cache-dependency-path: deps/llamacpp/tools/ui/package-lock.json
-
-      - name: Build UI assets
-        env:
-          HF_UI_VERSION: ${{ steps.tags.outputs.llamacpp_version }}
-          LLAMA_BUILD_NUMBER: ${{ steps.tags.outputs.llamacpp_version }}
-        run: |
-          npm ci
-          npm run build
-        working-directory: deps/llamacpp/tools/ui
-
-      - name: Pack UI assets
-        run: |
-          tar -czf dist.tar.gz -C deps/llamacpp/tools/ui/dist .
-          sha256sum dist.tar.gz > dist.tar.gz.sha256
-          mkdir -p output
-          mv dist.tar.gz dist.tar.gz.sha256 output/
-
-      - name: Push UI assets
-        if: ${{ vars.HF_REPO != '' }}
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          pip install -U "hf[hf_xet]"
-          python scripts/upload.py ${{ vars.HF_REPO }}/${{ steps.tags.outputs.llamacpp_version }}
 
   aarch64-linux-cpu:
     name: ${{ matrix.filter }}
