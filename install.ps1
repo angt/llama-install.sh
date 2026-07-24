@@ -47,7 +47,7 @@ function ProbeCUDA {
     $parts  = -split $CONFIG
     $CONFIG = $parts[0]
     $MAJOR  = $parts[1]
-    Download "llama.exe" "$ARCH/windows/cuda/$MAJOR/$CONFIG/llama-app.exe.zst"
+    Download "llama.exe" "$ARCH/windows/cuda/$MAJOR/$CONFIG/llama-app.exe.zst" | Out-Null
 }
 
 function ProbeVulkan {
@@ -59,7 +59,7 @@ function ProbeVulkan {
     if ($LASTEXITCODE) { return }
     $CONFIG = & "$DIR\featcode.exe" 2>$null
     & "$DIR\featcode.exe" $CONFIG 2>$null | % { "Found: $_" }
-    Download "llama.exe" @("$ARCH/windows/vulkan/$CONFIG/llama-app.exe.zst", "$ARCH/windows/vulkan/$CONFIG/llama-app.zst")
+    Download "llama.exe" @("$ARCH/windows/vulkan/$CONFIG/llama-app.exe.zst", "$ARCH/windows/vulkan/$CONFIG/llama-app.zst") | Out-Null
 }
 
 function ProbeCPU {
@@ -67,7 +67,7 @@ function ProbeCPU {
     if (!(Download "featcode.exe" "$ARCH/windows/featcode.exe")) { return }
     $CONFIG = & "$DIR\featcode.exe" 2>$null
     & "$DIR\featcode.exe" $CONFIG 2>$null | % { "Found: $_" }
-    Download "llama.exe" @("$ARCH/windows/cpu/$CONFIG/llama-app.exe.zst", "$ARCH/windows/cpu/$CONFIG/llama-app.zst")
+    Download "llama.exe" @("$ARCH/windows/cpu/$CONFIG/llama-app.exe.zst", "$ARCH/windows/cpu/$CONFIG/llama-app.zst") | Out-Null
 }
 
 function Main {
