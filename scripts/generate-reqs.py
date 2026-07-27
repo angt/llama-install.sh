@@ -25,6 +25,7 @@ SKIP_LIBS = [
     "CRYPT32.dll",
     "KERNEL32.dll",
     "WS2_32.dll",
+    "SHELL32.dll",
     "Accelerate",
     "CoreFoundation",
     "Foundation",
@@ -158,32 +159,50 @@ def main():
         local_dir = "output"
 
     entries = set()
-    for src in Path(local_dir).rglob('*.zst'):
-        dst = src.with_suffix('')
-        with src.open('rb') as fsrc, dst.open('wb') as fdst:
-            zstd.ZstdDecompressor().copy_stream(fsrc, fdst)
-        entries.add(analyze(str(dst), local_dir))
+    for arch in ("aarch64", "x86_64"):
+        for src in Path(local_dir, arch).rglob('*.zst'):
+            dst = src.with_suffix('')
+            with src.open('rb') as fsrc, dst.open('wb') as fdst:
+                zstd.ZstdDecompressor().copy_stream(fsrc, fdst)
+            entries.add(analyze(str(dst), local_dir))
 
-    groups = defaultdict(list)
+    groups = defaultdict(lambda: {"real": [], "probe": None})
     for entry in entries:
         name, arch, backend, version, libs = entry
-        top = backend.split('/')[0]
-        groups[(name, arch, top)].append(entry)
+        parts = backend.split('/')
+        if parts[-1] == "probe":
+            family = "/".join(parts[:-1])
+            groups[(name, arch, family)]["probe"] = entry
+        else:
+            family = "/".join(parts[:-1])
+            groups[(name, arch, family)]["real"].append(entry)
 
     cols = ["Name", "Arch", "Backend", "Version", "Libraries"]
     rows = []
-    for (name, arch, top), group in sorted(groups.items()):
-        versions_libs = {(e[3], e[4]) for e in group}
-        if len(versions_libs) == 1:
+    for (name, arch, family), group in sorted(groups.items()):
+        reals = group["real"]
+        probe = group["probe"]
+        signatures = {(e[3], e[4]) for e in reals}
+        collapsed = len(signatures) == 1
+        if collapsed:
+            _, _, _, version, libs = reals[0]
             rows.append([
                 name,
                 f"`{arch}`",
-                f"`{top}`",
-                group[0][3],
-                " ".join(f"`{lib}`" for lib in group[0][4]) or "-"
+                f"`{family}`",
+                version,
+                " ".join(f"`{lib}`" for lib in libs) or "-"
             ])
+            if probe and (probe[3], probe[4]) != (version, libs):
+                rows.append([
+                    name,
+                    f"`{arch}`",
+                    f"`{family}/probe`",
+                    probe[3],
+                    " ".join(f"`{lib}`" for lib in probe[4]) or "-"
+                ])
         else:
-            for name, arch, backend, version, libs in sorted(group):
+            for _, _, backend, version, libs in sorted(reals):
                 rows.append([
                     name,
                     f"`{arch}`",
@@ -191,7 +210,15 @@ def main():
                     version,
                     " ".join(f"`{lib}`" for lib in libs) or "-"
                 ])
-    rows.sort()
+            if probe:
+                rows.append([
+                    name,
+                    f"`{arch}`",
+                    f"`{family}/probe`",
+                    probe[3],
+                    " ".join(f"`{lib}`" for lib in probe[4]) or "-"
+                ])
+    rows.sort(key=lambda r: (r[0], r[1].strip('`'), r[2].strip('`').split('/')))
     widths = [max(map(len, x)) for x in zip(*([cols] + rows))]
     header = [[c.ljust(w) for c, w in zip(cols, widths)], ["-" * w for w in widths]]
     rows   = [[r.ljust(w) for r, w in zip(row, widths)] for row in rows]
