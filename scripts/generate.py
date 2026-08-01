@@ -345,6 +345,45 @@ def generate_x86_64_linux_rocm_probe_preset():
         configs   = configs,
     )
 
+def generate_x86_64_windows_rocm_presets():
+    # TheRock publishes a multi-arch "rocm" wheel for Windows too, but not
+    # every gfx target ships there (e.g. the CDNA Instinct parts gfx90a/942/950
+    # are Linux-only). Use the same ROCM_ARCHS list at first and let CI tell
+    # us which targets the Windows wheel lacks.
+    configs = []
+    for arch in ROCM_ARCHS:
+        name = f"gfx{arch}"
+        cache = {
+            "GGML_HIP": "ON",
+            "GGML_HIP_ROCWMMA_FATTN": "ON" if rocwmma(arch) else "OFF",
+            "CMAKE_HIP_ARCHITECTURES": name,
+        }
+        configs.append((name, cache))
+
+    return generate_presets(
+        os_name   = 'windows',
+        arch      = 'x86_64',
+        backend   = 'rocm',
+        toolchain = 'toolchains/rocm.cmake',
+        configs   = configs,
+    )
+
+def generate_x86_64_windows_rocm_probe_preset():
+    configs = []
+    name = "probe"
+    cache = {
+        "LLAMA_INSTALL_PROBE": "rocm",
+    }
+    configs.append((name, cache))
+
+    return generate_presets(
+        os_name   = 'windows',
+        arch      = 'x86_64',
+        backend   = 'rocm',
+        toolchain = 'toolchains/rocm.cmake',
+        configs   = configs,
+    )
+
 def generate_linux_cuda_presets(arch):
     configs = []
     last_arch = next(reversed(CUDA_ARCHS))
@@ -657,6 +696,8 @@ def main():
         generate_windows_cuda_probe_preset('x86_64'),
         generate_x86_64_linux_rocm_presets(),
         generate_x86_64_linux_rocm_probe_preset(),
+        generate_x86_64_windows_rocm_presets(),
+        generate_x86_64_windows_rocm_probe_preset(),
         generate_metal_presets(),
     ]
     data = {

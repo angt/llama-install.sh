@@ -110,7 +110,12 @@ endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
     add_link_options(-Wl,-dead_strip -Wl,-S)
 elseif(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    # Native MSVC (cl.exe)
     add_link_options(/OPT:REF /OPT:ICF)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+elseif(CMAKE_C_SIMULATE_ID STREQUAL "MSVC" AND (CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU"))
+    # Cross compiler targeting MSVC ABI (Zig, TheRock's clang++ on Windows, etc.)
+    add_link_options("-Wl,/OPT:REF" "-Wl,/OPT:ICF")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     add_link_options(-static-libgcc)
@@ -122,6 +127,12 @@ elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU
     endif()
 else()
     message(WARNING "Unknown compiler: ${CMAKE_C_COMPILER_ID}")
+endif()
+
+# TheRock's clang on Windows uses the GNU frontend but targets the MSVC ABI.
+# The HIP bf16 headers trigger -Wignored-attributes / -Wnested-anon-types there.
+if(WIN32 AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
+    add_compile_options(-Wno-ignored-attributes -Wno-nested-anon-types)
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/vulkan/stub.cmake")
