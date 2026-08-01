@@ -4,7 +4,7 @@ set(CROSS_ABI "none")
 
 if(LLAMA_INSTALL_OS STREQUAL "linux")
     if(CROSS_GLIBC)
-        set(CROSS_ABI "gnu.2.27")
+        set(CROSS_ABI "gnu.2.29")
     else()
         set(CROSS_ABI "musl")
     endif()
