@@ -22,14 +22,21 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ${{ contains(inputs.filter, '-windows-') && 'windows-2022' || 'ubuntu-22.04' }}
     env:
       ROCM_VERSION: "7.15.0a20260723"
 
     steps:
       - uses: actions/checkout@v5
 
+      - name: Setup windows env
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+        if: runner.os == 'Windows'
+
       - name: Install deps
+        shell: bash
         run: |
           GFX="${{ inputs.filter }}"
           GFX="${GFX##*-}"

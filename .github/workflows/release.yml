@@ -625,6 +625,7 @@ jobs:
       - x86_64-linux-cuda
       - x86_64-windows-cuda
       - x86_64-linux-rocm
+      - x86_64-windows-rocm
       - aarch64-macos-metal
     steps:
       - uses: actions/checkout@v5
@@ -648,4 +649,39 @@ jobs:
     with:
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       write_latest: ${{ needs.init.outputs.write_latest == 'true' }}
+    secrets: inherit
+  x86_64-windows-rocm:
+    name: ${{ matrix.filter }}
+    needs:
+      - init
+    strategy:
+      fail-fast: false
+      matrix:
+        filter:
+          - x86_64-windows-rocm-gfx906
+          - x86_64-windows-rocm-gfx90a
+          - x86_64-windows-rocm-gfx942
+          - x86_64-windows-rocm-gfx950
+          - x86_64-windows-rocm-gfx1030
+          - x86_64-windows-rocm-gfx1031
+          - x86_64-windows-rocm-gfx1032
+          - x86_64-windows-rocm-gfx1011
+          - x86_64-windows-rocm-gfx1100
+          - x86_64-windows-rocm-gfx1101
+          - x86_64-windows-rocm-gfx1102
+          - x86_64-windows-rocm-gfx1103
+          - x86_64-windows-rocm-gfx1150
+          - x86_64-windows-rocm-gfx1151
+          - x86_64-windows-rocm-gfx1152
+          - x86_64-windows-rocm-gfx1153
+          - x86_64-windows-rocm-gfx1200
+          - x86_64-windows-rocm-gfx1201
+          - x86_64-windows-rocm-probe
+    uses: ./.github/workflows/build-any-rocm.yml
+    with:
+      filter: ${{ matrix.filter }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
