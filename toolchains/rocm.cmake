@@ -19,6 +19,11 @@ if(WIN32)
     find_program(CMAKE_CXX_COMPILER clang++.exe
         PATHS "${ROCM_PATH}/bin" "${ROCM_PATH}/lib/llvm/bin"
         NO_DEFAULT_PATH REQUIRED)
+    # TheRock clang is installed in a non-standard (pip) prefix and cannot
+    # discover the ROCm device bitcode libraries on its own.  --rocm-path
+    # is also required when ggml-hip compiles .cu files as LANGUAGE CXX.
+    set(CMAKE_C_FLAGS_INIT   "${CMAKE_C_FLAGS_INIT} --rocm-path=\"${ROCM_PATH}\"")
+    set(CMAKE_CXX_FLAGS_INIT "${CMAKE_CXX_FLAGS_INIT} --rocm-path=\"${ROCM_PATH}\"")
 else()
     set(CMAKE_C_COMPILER   "${ROCM_PATH}/lib/llvm/bin/clang")
     set(CMAKE_CXX_COMPILER "${ROCM_PATH}/lib/llvm/bin/clang++")
