@@ -6,6 +6,10 @@ die() {
 	exit 111
 }
 
+info() {
+	printf "%s\n" "$@" >&2
+}
+
 check_bin() {
 	command -v "$1" >/dev/null 2>/dev/null
 }
@@ -27,13 +31,13 @@ curl() {
 dl_bin() {
 	[ -x "$1" ] && return
 	check_bin curl || die "Please install curl"
-	printf "Downloading %s...\n" "$1"
+	info "Downloading $1..."
 	case "$2" in
 	(*.zst) curl -fsSL "$REPO/$LLAMA_VERSION/$2" | unzstd ;;
 	(*)     curl -fsSL "$REPO/$LLAMA_VERSION/$2" ;;
 	esac > "$1.tmp" 2>/dev/null &&
 	chmod +x "$1.tmp" && mv "$1.tmp" "$1" && return
-	printf "Failed to download\n" >&2
+	info "Failed to download"
 	return 1
 }
 
@@ -44,36 +48,36 @@ unzstd() (
 )
 
 probe_cuda() {
-	[ -z "$SKIP_CUDA" ] && printf "Probing CUDA...\n" &&
+	[ -z "$SKIP_CUDA" ] && info "Probing CUDA..." &&
 	dl_bin cuda-probe "$ARCH/$OS/cuda/probe/probe.zst" &&
 	CONFIG=$(./cuda-probe) 2>/dev/null &&
-	printf "Found: %s\n" "$CONFIG" &&
+	info "Found: $CONFIG" &&
 	CONFIG=${CONFIG%% *} &&
 	dl_bin llama "$ARCH/$OS/cuda/$CONFIG/llama-app.zst"
 }
 
 probe_rocm() {
-	[ -z "$SKIP_ROCM" ] && printf "Probing ROCm...\n" &&
+	[ -z "$SKIP_ROCM" ] && info "Probing ROCm..." &&
 	dl_bin rocm-probe "$ARCH/$OS/rocm/probe/probe.zst" &&
 	CONFIG=$(./rocm-probe) 2>/dev/null &&
-	printf "Found: %s\n" "$CONFIG" &&
+	info "Found: $CONFIG" &&
 	dl_bin llama "$ARCH/$OS/rocm/$CONFIG/llama-app.zst"
 }
 
 probe_vulkan() {
-	[ -z "$SKIP_VULKAN" ] && printf "Probing Vulkan...\n" &&
+	[ -z "$SKIP_VULKAN" ] && info "Probing Vulkan..." &&
 	dl_bin vulkan-probe "$ARCH/$OS/vulkan/probe/probe.zst" &&
 	dl_bin featcode "$ARCH/$OS/featcode" &&
 	CONFIG=$(./vulkan-probe && ./featcode) 2>/dev/null &&
-	for F in $(./featcode "$CONFIG"); do printf "Found: %s\n" "$F"; done &&
+	for F in $(./featcode "$CONFIG"); do info "Found: $F"; done &&
 	dl_bin llama "$ARCH/$OS/vulkan/$CONFIG/llama-app.zst"
 }
 
 probe_cpu() {
-	printf "Probing CPU...\n" &&
+	info "Probing CPU..." &&
 	dl_bin featcode "$ARCH/$OS/featcode" &&
 	CONFIG=$(./featcode) 2>/dev/null &&
-	for F in $(./featcode "$CONFIG"); do printf "Found: %s\n" "$F"; done &&
+	for F in $(./featcode "$CONFIG"); do info "Found: $F"; done &&
 	dl_bin llama "$ARCH/$OS/cpu/$CONFIG/llama-app.zst"
 }
 
@@ -87,9 +91,9 @@ probe_metal_cpu() {
 }
 
 probe_metal() {
-	printf "Probing Metal...\n" &&
+	info "Probing Metal..." &&
 	CONFIG=$(sysctl -n machdep.cpu.brand_string 2>/dev/null | probe_metal_cpu) &&
-	printf "Found: %s\n" "$CONFIG" &&
+	info "Found: $CONFIG" &&
 	dl_bin llama "$ARCH/$OS/metal/$CONFIG/llama-app.zst"
 }
 
@@ -120,7 +124,7 @@ main() {
 
 	[ "$LLAMA_VERSION" ] || LLAMA_VERSION=$(curl -fsSL "$REPO/latest")
 	[ "$LLAMA_VERSION" ] || die "No version found"
-	printf "Version: %s\n" "$LLAMA_VERSION"
+	info "Version: $LLAMA_VERSION"
 
 	(
 		rm -rf ~/.llama-app
@@ -142,7 +146,7 @@ main() {
 	) || exit
 
 	if [ "$SKIP_INSTALL" ]; then
-		printf "Installation skipped, SKIP_INSTALL is set\n"
+		info "Installation skipped, SKIP_INSTALL is set"
 		return
 	fi
 
@@ -159,7 +163,7 @@ main() {
 	mv ~/.local/bin/llama.tmp ~/.local/bin/llama || die \
 		"Couldn't install llama to ~/.local/bin"
 
-	printf "Installation completed successfully\n\n"
+	info "Installation completed successfully" ""
 
 	if check_path "$PATH"; then
 		cat <<-EOF
