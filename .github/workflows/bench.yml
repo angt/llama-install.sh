@@ -78,6 +78,12 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN_BENCHES }}
           REPO: ${{ vars.HF_REPO_BENCHES }}
         run: |
-          VERSION=$(~/.llama-app/llama version)
+          OUT=$(~/.llama-app/llama version 2>&1)
+          case "$OUT" in
+          (*"build "[0-9]*) N=${OUT#*"build "}; N=${N%%,*} ;;
+          (b[0-9]*)         N=${OUT#b};         N=${N%%-*} ;;
+          (*) echo "Could not parse llama version: $OUT"; exit 1 ;;
+          esac
+          VERSION=b$N
           pip install -U "hf[hf_xet]" ||:
           python3 scripts/upload.py "$REPO/$VERSION"

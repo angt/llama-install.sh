@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import re
 import shutil
 import statistics
 import subprocess
@@ -32,15 +33,19 @@ def download(version):
     subprocess.run(cmd, check=True, env=env)
     r = subprocess.run([str(src), "version"], capture_output=True, text=True)
 
-    if r.returncode != 0 or not r.stdout.strip():
+    if r.returncode != 0:
         sys.exit("Error: could not detect llama version")
 
-    detected = r.stdout.strip()
+    out = (r.stdout + r.stderr).strip()
+    m = re.search(r"(?:build |^b)(\d+)", out)
+    if not m:
+        sys.exit(f"Error: could not detect llama version (got {out!r})")
+    detected = "b" + m.group(1)
 
-    if version and not detected.startswith(version):
+    if version and detected != version:
         sys.exit(f"Error: version mismatch (expected {version}, got {detected})")
 
-    tag = detected.split("-")[0]
+    tag = detected
     dest = Path(f"llama-app-{tag}{suffix}").resolve()
     shutil.copy2(src, dest)
     return dest
