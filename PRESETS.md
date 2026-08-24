@@ -53,6 +53,8 @@
 | `klxrk` | **x86_64_v4** | `avx` `f16c` `fma` `avx2` `bmi2` `avx512f` `avx512vl` `avx512bw` `avx512dq` `avx512cd` `avx512vnni` `avx512vbmi` `avx512bf16`                                                                       |
 | `knxrk` | **x86_64_v4** | `avx` `f16c` `fma` `avx2` `bmi2` `avxvnni` `avx512f` `avx512vl` `avx512bw` `avx512dq` `avx512cd` `avx512vnni` `avx512vbmi` `avx512bf16`                                                             |
 | `krxrk` | **x86_64_v4** | `avx` `f16c` `fma` `avx2` `bmi2` `avxvnni` `avxvnniint8` `avx512f` `avx512vl` `avx512bw` `avx512dq` `avx512cd` `avx512vnni` `avx512vbmi` `avx512bf16`                                               |
+| `knxzk` | **x86_64_v4** | `avx` `f16c` `fma` `avx2` `bmi2` `avxvnni` `avx512f` `avx512vl` `avx512bw` `avx512dq` `avx512cd` `avx512vnni` `avx512vbmi` `avx512bf16` `avx512fp16`                                                |
+| `krxzk` | **x86_64_v4** | `avx` `f16c` `fma` `avx2` `bmi2` `avxvnni` `avxvnniint8` `avx512f` `avx512vl` `avx512bw` `avx512dq` `avx512cd` `avx512vnni` `avx512vbmi` `avx512bf16` `avx512fp16`                                  |
 | `knxzq` | **x86_64_v4** | `avx` `f16c` `fma` `avx2` `bmi2` `avxvnni` `avx512f` `avx512vl` `avx512bw` `avx512dq` `avx512cd` `avx512vnni` `avx512vbmi` `avx512bf16` `avx512fp16` `amx-tile` `amx-int8` `amx-bf16`               |
 | `krxzq` | **x86_64_v4** | `avx` `f16c` `fma` `avx2` `bmi2` `avxvnni` `avxvnniint8` `avx512f` `avx512vl` `avx512bw` `avx512dq` `avx512cd` `avx512vnni` `avx512vbmi` `avx512bf16` `avx512fp16` `amx-tile` `amx-int8` `amx-bf16` |
 
