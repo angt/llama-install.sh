@@ -165,7 +165,9 @@ def generate_x86_64_features():
         ('avx512dq',    'avx512bw'  ),
         ('avx512vnni',  'avx512dq'  ),
         ('avx512bf16',  'avx512vnni'),
-        ('avx512fp16',  'amx-bf16'  ),
+        ('avx512fp16',  'avxvnni'   ),  # instead of ('avx512fp16', 'amx-bf16')
+        ('avx512fp16',  'avx512bf16'),  # see https://github.com/ggml-org/llama-install.sh/issues/92
+        ('avx512fp16',  'avx512vbmi'),  #
         ('amx-tile',    'amx-bf16'  ),
         ('amx-bf16',    'avxvnni'   ),
         ('amx-bf16',    'avx512vbmi'),
