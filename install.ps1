@@ -42,6 +42,18 @@ function ProbeCUDA {
     "Probing CUDA..."
     if (!(Download "cuda-probe.exe" "$ARCH/windows/cuda/probe/probe.exe.zst")) { return }
     $CONFIG = & "$DIR\cuda-probe.exe" 2>$null
+    if ($LASTEXITCODE -eq 5) {
+        "NVIDIA GPU detected, but the CUDA Toolkit is not installed."
+        "To enable CUDA acceleration, install it from:"
+        ""
+        "  https://developer.nvidia.com/cuda-downloads"
+        ""
+        "or run:"
+        ""
+        "  winget install Nvidia.CUDA"
+        ""
+        return
+    }
     if ($LASTEXITCODE) { return }
     "Found: $CONFIG"
     $parts  = -split $CONFIG
