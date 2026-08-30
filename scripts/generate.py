@@ -47,7 +47,7 @@ def get_featcode(os_name=None, arch=None):
 
     ext = ".exe" if os_name == "windows" else ""
     filename = f"featcode{ext}"
-    url = f"https://github.com/angt/featcode/releases/download/v9/{arch}-{os_name}-{filename}"
+    url = f"https://github.com/angt/featcode/releases/download/v10/{arch}-{os_name}-{filename}"
     return url, filename
 
 ROCM_ARCHS = [
