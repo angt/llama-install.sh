@@ -46,7 +46,7 @@ jobs:
         env:
           LLAMA_BUCKET: ${{ vars.HF_REPO }}
           LLAMA_VERSION: ${{ inputs.version }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
         run: SKIP_INSTALL=1 sh install.sh
 
       - name: Check model
