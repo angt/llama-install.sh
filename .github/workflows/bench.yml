@@ -22,7 +22,9 @@ jobs:
         model:
           - unsloth/Qwen3.5-0.8B-GGUF
           - unsloth/Qwen3.6-27B-GGUF
+          - unsloth/Qwen3.8-27B-GGUF
           - unsloth/gpt-oss-20b-GGUF
+          - unsloth/gpt-oss-120b-GGUF
           - unsloth/gemma-4-26B-A4B-it-GGUF
           - unsloth/gemma-4-E4B-it-GGUF
         quant:
@@ -53,7 +55,7 @@ jobs:
           MODEL: ${{ matrix.model }}
           QUANT: ${{ matrix.quant }}
         run: |
-          if ~/.llama-app/llama download --offline -hf "$MODEL:$QUANT" 1>/dev/null
+          if ~/.llama-app/llama download -hf "$MODEL:$QUANT" 1>/dev/null
           then echo "present=true"
           else echo "present=false"
           fi >> "$GITHUB_OUTPUT"
