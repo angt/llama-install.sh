@@ -23,6 +23,9 @@ on:
   workflow_dispatch:
     inputs: *common_inputs
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ${{ contains(inputs.filter, '-windows-') && 'windows-2022' || (startsWith(inputs.filter, 'aarch64-') && 'ubuntu-22.04-arm' || 'ubuntu-22.04') }}
@@ -47,7 +50,9 @@ jobs:
 
       - name: Select CUDA version
         shell: bash
-        run: echo "CUDA_VERSION=${CUDA_VERSION_${{ inputs.cuda_code }}}" >> "$GITHUB_ENV"
+        env:
+          CUDA_CODE: ${{ inputs.cuda_code }}
+        run: echo "CUDA_VERSION=${CUDA_VERSION_$CUDA_CODE}" >> "$GITHUB_ENV"
 
       - name: Install cuda
         run: python scripts/install-cuda.py
@@ -59,12 +64,15 @@ jobs:
           BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
           BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
-        run: cmake --workflow --preset ${{ inputs.filter }}
+          FILTER: ${{ inputs.filter }}
+        run: cmake --workflow --preset "$FILTER"
 
       - name: Deploy
         if: ${{ inputs.deploy && vars.HF_REPO != '' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_REPO: ${{ vars.HF_REPO }}
+          VERSION: ${{ inputs.llamacpp_version || 'test' }}
         run: |
           pip install -U "hf[hf_xet]"
-          python scripts/upload.py ${{ vars.HF_REPO }}/${{ inputs.llamacpp_version || 'test' }}
+          python scripts/upload.py "$HF_REPO/$VERSION"

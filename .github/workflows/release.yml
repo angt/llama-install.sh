@@ -16,6 +16,10 @@ on:
         type: boolean
   schedule:
     - cron: 0 0 * * 6
+
+permissions:
+  contents: read
+
 jobs:
   init:
     runs-on: ubuntu-latest
@@ -28,15 +32,18 @@ jobs:
         id: tags
         env:
           GH_TOKEN: ${{ github.token }}
+          LLAMACPP_INPUT: ${{ inputs.llamacpp_version }}
+          EVENT_NAME: ${{ github.event_name }}
+          WRITE_LATEST_INPUT: ${{ inputs.write_latest }}
         run: |
-          if [ "${{ inputs.llamacpp_version }}" ]
-          then LLAMACPP_VERSION="${{ inputs.llamacpp_version }}"
+          if [ "$LLAMACPP_INPUT" ]
+          then LLAMACPP_VERSION="$LLAMACPP_INPUT"
           else LLAMACPP_VERSION=$(gh api "repos/ggml-org/llama.cpp/releases?per_page=30" --jq '[.[] | select(.tag_name|test("^b[0-9]+$"))][0].tag_name')
           fi
           BORINGSSL_VERSION=$(git ls-remote --tags https://boringssl.googlesource.com/boringssl | sed -nE 's,.*/tags/(0\.[0-9]+\.0)$,\1,p' | sort | tail -n 1)
-          if [ "${{ github.event_name }}" = "schedule" ]
+          if [ "$EVENT_NAME" = "schedule" ]
           then WRITE_LATEST="true"
-          else WRITE_LATEST="${{ inputs.write_latest }}"
+          else WRITE_LATEST="$WRITE_LATEST_INPUT"
           fi
           cat <<EOF >> "$GITHUB_OUTPUT"
           llamacpp_version=$LLAMACPP_VERSION
@@ -643,10 +650,12 @@ jobs:
         if: ${{ vars.HF_REPO != '' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_REPO: ${{ vars.HF_REPO }}
+          VERSION: ${{ needs.init.outputs.llamacpp_version }}
         run: |
           pip install -U "hf[hf_xet]"
           python scripts/fetch-artefacts.py
-          python scripts/upload.py ${{ vars.HF_REPO }}/${{ needs.init.outputs.llamacpp_version }}
+          python scripts/upload.py "$HF_REPO/$VERSION"
           rm -rf output
 
   test:
