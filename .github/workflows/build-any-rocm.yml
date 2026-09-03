@@ -20,6 +20,9 @@ on:
   workflow_dispatch:
     inputs: *common_inputs
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -30,8 +33,10 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Install deps
+        env:
+          FILTER: ${{ inputs.filter }}
         run: |
-          GFX="${{ inputs.filter }}"
+          GFX="$FILTER"
           GFX="${GFX##*-}"
           case "$GFX" in
           (probe) ROCM="rocm[devel,libraries]" ;;
@@ -49,12 +54,15 @@ jobs:
           BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
           BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
-        run: cmake --workflow --preset ${{ inputs.filter }}
+          FILTER: ${{ inputs.filter }}
+        run: cmake --workflow --preset "$FILTER"
 
       - name: Deploy
         if: ${{ inputs.deploy && vars.HF_REPO != '' }}
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_REPO: ${{ vars.HF_REPO }}
+          VERSION: ${{ inputs.llamacpp_version || 'test' }}
         run: |
           pip install -U "hf[hf_xet]"
-          python scripts/upload.py ${{ vars.HF_REPO }}/${{ inputs.llamacpp_version || 'test' }}
+          python scripts/upload.py "$HF_REPO/$VERSION"

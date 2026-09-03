@@ -10,6 +10,9 @@ on:
         default: ''
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   bench:
     name: ${{ matrix.backend }}:${{ matrix.model }}:${{ matrix.quant }}
