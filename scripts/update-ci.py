@@ -15,7 +15,7 @@ with urlopen("https://vulkan.lunarg.com/sdk/latest/linux.txt") as r:
     updates["VULKAN_VERSION"] = r.read().decode().strip()
 
 with urlopen("https://rocm.nightlies.amd.com/whl-multi-arch/rocm/") as r:
-    updates["ROCM_VERSION"] = sorted(re.findall(r'rocm-(\d+\.\d+\.\d+a\d+)\.tar\.gz', r.read().decode()))[-1]
+    updates["ROCM_VERSION"] = max(re.findall(r'rocm-(\d+\.\d+\.\d+a\d+)\.tar\.gz', r.read().decode()), key=lambda v: [*map(int, re.findall(r'\d+', v))])
 
 with urlopen("https://developer.download.nvidia.com/compute/cuda/redist/") as r:
     index = r.read().decode()
