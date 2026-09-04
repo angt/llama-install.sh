@@ -26,8 +26,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ZIG_VERSION: "0.17.0-dev.1936+5a625d5f3"
 
     steps:
       - uses: actions/checkout@v5

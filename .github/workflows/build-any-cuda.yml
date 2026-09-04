@@ -29,10 +29,6 @@ permissions:
 jobs:
   build:
     runs-on: ${{ contains(inputs.filter, '-windows-') && 'windows-2022' || (startsWith(inputs.filter, 'aarch64-') && 'ubuntu-22.04-arm' || 'ubuntu-22.04') }}
-    env:
-      CUDA_VERSION_128: "12.8.2"
-      CUDA_VERSION_129: "12.9.2"
-      CUDA_VERSION_130: "13.0.3"
     steps:
       - uses: actions/checkout@v5
 
@@ -48,13 +44,9 @@ jobs:
           arch: x64
         if: runner.os == 'Windows'
 
-      - name: Select CUDA version
-        shell: bash
+      - name: Install cuda
         env:
           CUDA_CODE: ${{ inputs.cuda_code }}
-        run: echo "CUDA_VERSION=${CUDA_VERSION_$CUDA_CODE}" >> "$GITHUB_ENV"
-
-      - name: Install cuda
         run: python scripts/install-cuda.py
 
       - name: Build ${{ inputs.filter }}
