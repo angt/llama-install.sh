@@ -12,8 +12,18 @@ from functools import wraps
 from pathlib import Path
 from urllib.request import urlopen
 
-VERSION = os.getenv("CUDA_VERSION", "12.8.2")
+from versions import CUDA_VERSIONS
+
 URL = "https://developer.download.nvidia.com/compute/cuda/redist"
+
+def cuda_version():
+    code = os.getenv("CUDA_CODE")
+    if code in CUDA_VERSIONS:
+        return CUDA_VERSIONS[code]
+    codes = ", ".join(sorted(CUDA_VERSIONS))
+    sys.exit(f"Unknown CUDA_CODE '{code}' (expected one of: {codes})")
+
+VERSION = cuda_version()
 
 ROOT = Path.cwd() / "deps" / "cuda"
 DEST = ROOT.with_suffix(".tmp")
