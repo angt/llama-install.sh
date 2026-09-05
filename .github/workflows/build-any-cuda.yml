@@ -57,6 +57,7 @@ jobs:
           BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
           FILTER: ${{ inputs.filter }}
+        shell: bash
         run: cmake --workflow --preset "$FILTER"
 
       - name: Deploy
@@ -65,6 +66,7 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_REPO: ${{ vars.HF_REPO }}
           VERSION: ${{ inputs.llamacpp_version || 'test' }}
+        shell: bash
         run: |
           pip install -U "hf[hf_xet]"
           python scripts/upload.py "$HF_REPO/$VERSION"
