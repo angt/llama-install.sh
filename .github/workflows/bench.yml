@@ -22,13 +22,24 @@ permissions:
 
 jobs:
   bench:
-    name: ${{ matrix.backend }}:${{ matrix.model }}:${{ matrix.quant }}
-    runs-on: [self-hosted, "${{ matrix.backend }}"]
+    name: ${{ matrix.backend.id }}:${{ matrix.model }}:${{ matrix.quant }}
+    runs-on:
+      group: ${{ matrix.backend.group }}
+      labels: ${{ matrix.backend.labels }}
+    container:
+      image: ${{ matrix.backend.container }}
     strategy:
       fail-fast: false
       matrix:
         backend:
-          - gfx1151
+          - id: gfx1151
+            group: default
+            labels: [self-hosted, gfx1151]
+            container: ''
+          - id: gfx1201
+            group: ggml-hfc-amd-r9700-1gpu
+            labels: []
+            container: rocm/dev-ubuntu-24.04:7.2.4-complete
         model:
           - unsloth/Qwen3.5-0.8B-GGUF
           - unsloth/Qwen3.6-27B-GGUF
@@ -76,7 +87,7 @@ jobs:
         if: steps.download.outputs.present == 'true'
         env:
           MODEL: ${{ matrix.model }}
-          BACKEND: ${{ matrix.backend }}
+          BACKEND: ${{ matrix.backend.id }}
           QUANT: ${{ matrix.quant }}
         run: |
           NAME="$MODEL"
