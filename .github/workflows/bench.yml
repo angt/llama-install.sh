@@ -1,34 +1,39 @@
-name: Bench
+name: Bench backend
 
 on:
-  schedule:
-    - cron: '0 0 * * 3'
-  workflow_dispatch:
-    inputs: &inputs
-      version:
-        required: false
-        default: ''
-        type: string
-      skip_push:
-        description: 'Skip pushing benchmark results to the bucket'
-        required: false
-        default: false
-        type: boolean
   workflow_call:
-    inputs: *inputs
+    inputs:
+      backend:
+        type: string
+        required: true
+      runner:
+        type: string
+        required: true
+      container:
+        type: string
+        default: ''
+      device:
+        type: string
+        required: true
+      version:
+        type: string
+        default: ''
+      skip_push:
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   bench:
-    name: ${{ matrix.backend }}:${{ matrix.model }}:${{ matrix.quant }}
-    runs-on: [self-hosted, "${{ matrix.backend }}"]
+    name: ${{ inputs.backend }}:${{ matrix.model }}:${{ matrix.quant }}
+    runs-on: ${{ fromJSON(inputs.runner) }}
+    container:
+      image: ${{ inputs.container }}
     strategy:
       fail-fast: false
       matrix:
-        backend:
-          - gfx1151
         model:
           - unsloth/Qwen3.5-0.8B-GGUF
           - unsloth/Qwen3.6-27B-GGUF
@@ -76,7 +81,7 @@ jobs:
         if: steps.download.outputs.present == 'true'
         env:
           MODEL: ${{ matrix.model }}
-          BACKEND: ${{ matrix.backend }}
+          BACKEND: ${{ inputs.backend }}
           QUANT: ${{ matrix.quant }}
         run: |
           NAME="$MODEL"
