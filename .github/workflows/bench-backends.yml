@@ -1,0 +1,45 @@
+name: Bench
+
+on:
+  schedule:
+    - cron: '0 0 * * 3'
+  workflow_dispatch:
+    inputs: &inputs
+      version:
+        required: false
+        default: ''
+        type: string
+      skip_push:
+        required: false
+        default: false
+        type: boolean
+  workflow_call:
+    inputs: *inputs
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    name: ${{ matrix.backend }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - backend: gfx1151
+            runner: [self-hosted, gfx1151]
+            container: ''
+
+          - backend: gfx1201
+            runner:
+              group: ggml-hfc-amd-r9700-1gpu
+            container: rocm/dev-ubuntu-24.04:7.2.4-complete
+
+    uses: ./.github/workflows/bench.yml
+    with:
+      backend: ${{ matrix.backend }}
+      runner: ${{ toJSON(matrix.runner) }}
+      container: ${{ matrix.container }}
+      version: ${{ inputs.version }}
+      skip_push: ${{ inputs.skip_push || false }}
+    secrets: inherit
