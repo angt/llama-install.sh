@@ -9,6 +9,11 @@ on:
         required: false
         default: ''
         type: string
+      skip_push:
+        description: 'Skip pushing benchmark results to the bucket'
+        required: false
+        default: false
+        type: boolean
   workflow_call:
     inputs: *inputs
 
@@ -82,7 +87,7 @@ jobs:
           ~/.llama-app/llama bench --offline -v -fa 0,1 -hf "$MODEL:$QUANT" -o jsonl -r 10 > "output/$BACKEND/$NAME/$QUANT.jsonl"
 
       - name: Push
-        if: steps.download.outputs.present == 'true'
+        if: steps.download.outputs.present == 'true' && !inputs.skip_push
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN_BENCHES }}
           REPO: ${{ vars.HF_REPO_BENCHES }}
