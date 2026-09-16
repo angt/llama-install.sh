@@ -26,20 +26,14 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      VULKAN_VERSION: "1.4.357.1"
 
     steps:
       - uses: actions/checkout@v5
 
-      - name: Setup Zig
-        run: python scripts/install-zig.py
-
-      - name: Setup Vulkan
+      - name: Setup Zig and Vulkan
         run: |
-          VULKAN="vulkansdk-linux-$(uname -m)-$VULKAN_VERSION"
-          curl -sSf "https://sdk.lunarg.com/sdk/download/$VULKAN_VERSION/linux/$VULKAN.tar.xz" | tar -Jxf- -C ~
-          sudo mv ~/"$VULKAN_VERSION/$(uname -m)" /opt/vulkan-sdk
+          python scripts/install-zig.py
+          python scripts/install-vulkan.py
 
       - name: Build ${{ inputs.filter }}
         env:
