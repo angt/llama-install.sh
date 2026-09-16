@@ -20,7 +20,7 @@ with urlopen("https://ziglang.org/download/index.json") as r:
 with urlopen("https://vulkan.lunarg.com/sdk/latest/linux.txt") as r:
     vulkan_version = r.read().decode().strip()
 
-with urlopen("https://rocm.nightlies.amd.com/whl-multi-arch/rocm/") as r:
+with urlopen("https://nightly.repo.amd.com/rocm/whl-next/rocm/") as r:
     updates["ROCM_VERSION"] = max(re.findall(r'rocm-(\d+\.\d+\.\d+a\d+)\.tar\.gz', r.read().decode()), key=lambda v: [*map(int, re.findall(r'\d+', v))])
 
 with urlopen("https://developer.download.nvidia.com/compute/cuda/redist/") as r:
