@@ -52,6 +52,19 @@ jobs:
           EOF
           grep _version= "$GITHUB_OUTPUT"
 
+      - uses: actions/checkout@v5
+
+      - name: Upload artefacts
+        if: ${{ vars.HF_REPO != '' }}
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_REPO: ${{ vars.HF_REPO }}
+          VERSION: ${{ steps.tags.outputs.llamacpp_version || 'test' }}
+        run: |
+          pip install -U "huggingface_hub[hf_xet]"
+          python scripts/fetch-artefacts.py
+          python scripts/upload.py "$HF_REPO/$VERSION"
+
   aarch64-linux-cpu:
     name: ${{ matrix.filter }}
     needs:
@@ -645,8 +658,7 @@ jobs:
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
-  release:
-    runs-on: ubuntu-latest
+  test:
     needs:
       - init
       - aarch64-linux-cpu
@@ -665,25 +677,6 @@ jobs:
       - x86_64-windows-cuda
       - x86_64-linux-rocm
       - aarch64-macos-metal
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Upload artefacts
-        if: ${{ vars.HF_REPO != '' }}
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_REPO: ${{ vars.HF_REPO }}
-          VERSION: ${{ needs.init.outputs.llamacpp_version }}
-        run: |
-          pip install -U "huggingface_hub[hf_xet]"
-          python scripts/fetch-artefacts.py
-          python scripts/upload.py "$HF_REPO/$VERSION"
-          rm -rf output
-
-  test:
-    needs:
-      - init
-      - release
     if: ${{ vars.HF_REPO != '' }}
     uses: ./.github/workflows/test-release.yml
     with:
