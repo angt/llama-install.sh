@@ -49,7 +49,10 @@ jobs:
           }
           pip install --extra-index-url https://nightly.repo.amd.com/rocm/whl-next/ "$Rocm==$env:ROCM_VERSION"
           rocm-sdk init
-          "ROCM_PATH=$(rocm-sdk path --root)" >> $env:GITHUB_ENV
+          $Root = rocm-sdk path --root
+          "ROCM_PATH=$Root" >> $env:GITHUB_ENV
+          "HIP_PATH=$Root" >> $env:GITHUB_ENV
+          "HIP_DEVICE_LIB_PATH=$Root\lib\llvm\amdgcn\bitcode" >> $env:GITHUB_ENV
 
       - name: Build ${{ inputs.preset }}
         env:

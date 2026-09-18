@@ -16,7 +16,3 @@ else()
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/exit.cmake")
-
-if(LLAMA_INSTALL_OS STREQUAL "windows")
-    string(APPEND CMAKE_CXX_FLAGS_INIT " --rocm-path=${ROCM_PATH}")
-endif()
