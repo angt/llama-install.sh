@@ -3,7 +3,7 @@ name: Build any rocm
 on:
   workflow_call:
     inputs: &common_inputs
-      filter:
+      preset:
         type: string
         default: 'rocm'
       deploy:
@@ -34,9 +34,9 @@ jobs:
 
       - name: Install deps
         env:
-          FILTER: ${{ inputs.filter }}
+          PRESET: ${{ inputs.preset }}
         run: |
-          GFX="$FILTER"
+          GFX="$PRESET"
           GFX="${GFX##*-}"
           case "$GFX" in
           (probe) ROCM="rocm[devel,libraries]" ;;
@@ -47,15 +47,15 @@ jobs:
           rocm-sdk init
           echo "ROCM_PATH=$(rocm-sdk path --root)" >> "$GITHUB_ENV"
 
-      - name: Build ${{ inputs.filter }}
+      - name: Build ${{ inputs.preset }}
         env:
           LLAMACPP_REPO: ${{ inputs.llamacpp_repo }}
           LLAMACPP_VERSION: ${{ inputs.llamacpp_version }}
           BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
           BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
-          FILTER: ${{ inputs.filter }}
-        run: cmake --workflow --preset "$FILTER"
+          PRESET: ${{ inputs.preset }}
+        run: cmake --workflow --preset "$PRESET"
 
       - name: Deploy
         if: ${{ inputs.deploy && vars.HF_REPO != '' }}

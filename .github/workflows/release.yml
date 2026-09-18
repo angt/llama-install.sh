@@ -66,13 +66,13 @@ jobs:
           python scripts/upload.py "$HF_REPO/$VERSION"
 
   aarch64-linux-cpu:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - aarch64-linux-cpu-kk
           - aarch64-linux-cpu-lk
           - aarch64-linux-cpu-mk
@@ -89,20 +89,20 @@ jobs:
           - aarch64-linux-cpu-qn
     uses: ./.github/workflows/build-any-cpu.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   x86_64-linux-cpu:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - x86_64-linux-cpu-kkkkk
           - x86_64-linux-cpu-lkkkk
           - x86_64-linux-cpu-mkkkk
@@ -137,20 +137,20 @@ jobs:
           - x86_64-linux-cpu-krxzq
     uses: ./.github/workflows/build-any-cpu.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   aarch64-windows-cpu:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - aarch64-windows-cpu-kk
           - aarch64-windows-cpu-lk
           - aarch64-windows-cpu-mk
@@ -167,20 +167,20 @@ jobs:
           - aarch64-windows-cpu-qn
     uses: ./.github/workflows/build-any-cpu.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   x86_64-windows-cpu:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - x86_64-windows-cpu-kkkkk
           - x86_64-windows-cpu-lkkkk
           - x86_64-windows-cpu-mkkkk
@@ -215,20 +215,20 @@ jobs:
           - x86_64-windows-cpu-krxzq
     uses: ./.github/workflows/build-any-cpu.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   aarch64-freebsd-cpu:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - aarch64-freebsd-cpu-kk
           - aarch64-freebsd-cpu-lk
           - aarch64-freebsd-cpu-mk
@@ -245,20 +245,20 @@ jobs:
           - aarch64-freebsd-cpu-qn
     uses: ./.github/workflows/build-any-cpu.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   x86_64-freebsd-cpu:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - x86_64-freebsd-cpu-kkkkk
           - x86_64-freebsd-cpu-lkkkk
           - x86_64-freebsd-cpu-mkkkk
@@ -293,20 +293,38 @@ jobs:
           - x86_64-freebsd-cpu-krxzq
     uses: ./.github/workflows/build-any-cpu.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  aarch64-linux-vulkan-probe:
+    name: ${{ matrix.preset }}
+    needs:
+      - init
+    strategy:
+      fail-fast: false
+      matrix:
+        preset:
+          - aarch64-linux-vulkan-probe
+    uses: ./.github/workflows/build-any-vulkan.yml
+    with:
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   aarch64-linux-vulkan:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
+      - aarch64-linux-vulkan-probe
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - aarch64-linux-vulkan-kk
           - aarch64-linux-vulkan-lk
           - aarch64-linux-vulkan-mk
@@ -321,23 +339,40 @@ jobs:
           - aarch64-linux-vulkan-qm
           - aarch64-linux-vulkan-ym
           - aarch64-linux-vulkan-qn
-          - aarch64-linux-vulkan-probe
     uses: ./.github/workflows/build-any-vulkan.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  x86_64-linux-vulkan-probe:
+    name: ${{ matrix.preset }}
+    needs:
+      - init
+    strategy:
+      fail-fast: false
+      matrix:
+        preset:
+          - x86_64-linux-vulkan-probe
+    uses: ./.github/workflows/build-any-vulkan.yml
+    with:
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   x86_64-linux-vulkan:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
+      - x86_64-linux-vulkan-probe
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - x86_64-linux-vulkan-kkkkk
           - x86_64-linux-vulkan-lkkkk
           - x86_64-linux-vulkan-mkkkk
@@ -370,23 +405,40 @@ jobs:
           - x86_64-linux-vulkan-krxzk
           - x86_64-linux-vulkan-knxzq
           - x86_64-linux-vulkan-krxzq
-          - x86_64-linux-vulkan-probe
     uses: ./.github/workflows/build-any-vulkan.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  aarch64-windows-vulkan-probe:
+    name: ${{ matrix.preset }}
+    needs:
+      - init
+    strategy:
+      fail-fast: false
+      matrix:
+        preset:
+          - aarch64-windows-vulkan-probe
+    uses: ./.github/workflows/build-any-vulkan.yml
+    with:
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   aarch64-windows-vulkan:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
+      - aarch64-windows-vulkan-probe
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - aarch64-windows-vulkan-kk
           - aarch64-windows-vulkan-lk
           - aarch64-windows-vulkan-mk
@@ -401,23 +453,40 @@ jobs:
           - aarch64-windows-vulkan-qm
           - aarch64-windows-vulkan-ym
           - aarch64-windows-vulkan-qn
-          - aarch64-windows-vulkan-probe
     uses: ./.github/workflows/build-any-vulkan.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  x86_64-windows-vulkan-probe:
+    name: ${{ matrix.preset }}
+    needs:
+      - init
+    strategy:
+      fail-fast: false
+      matrix:
+        preset:
+          - x86_64-windows-vulkan-probe
+    uses: ./.github/workflows/build-any-vulkan.yml
+    with:
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   x86_64-windows-vulkan:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
+      - x86_64-windows-vulkan-probe
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - x86_64-windows-vulkan-kkkkk
           - x86_64-windows-vulkan-lkkkk
           - x86_64-windows-vulkan-mkkkk
@@ -450,44 +519,80 @@ jobs:
           - x86_64-windows-vulkan-krxzk
           - x86_64-windows-vulkan-knxzq
           - x86_64-windows-vulkan-krxzq
-          - x86_64-windows-vulkan-probe
     uses: ./.github/workflows/build-any-vulkan.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
-  aarch64-linux-cuda:
-    name: ${{ matrix.filter }}
+  aarch64-linux-cuda-probe:
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
         include:
-          - filter: aarch64-linux-cuda-75
-            cuda_code: '128'
-          - filter: aarch64-linux-cuda-80
-            cuda_code: '128'
-          - filter: aarch64-linux-cuda-86
-            cuda_code: '128'
-          - filter: aarch64-linux-cuda-89
-            cuda_code: '128'
-          - filter: aarch64-linux-cuda-90
-            cuda_code: '128'
-          - filter: aarch64-linux-cuda-100
-            cuda_code: '128'
-          - filter: aarch64-linux-cuda-120
-            cuda_code: '128'
-          - filter: aarch64-linux-cuda-121
-            cuda_code: '129'
-          - filter: aarch64-linux-cuda-probe
+          - preset: aarch64-linux-cuda-probe
             cuda_code: '129'
     uses: ./.github/workflows/build-any-linux-cuda.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
+      cuda_code: ${{ matrix.cuda_code }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  aarch64-linux-cuda:
+    name: ${{ matrix.preset }}
+    needs:
+      - init
+      - aarch64-linux-cuda-probe
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - preset: aarch64-linux-cuda-75
+            cuda_code: '128'
+          - preset: aarch64-linux-cuda-80
+            cuda_code: '128'
+          - preset: aarch64-linux-cuda-86
+            cuda_code: '128'
+          - preset: aarch64-linux-cuda-89
+            cuda_code: '128'
+          - preset: aarch64-linux-cuda-90
+            cuda_code: '128'
+          - preset: aarch64-linux-cuda-100
+            cuda_code: '128'
+          - preset: aarch64-linux-cuda-120
+            cuda_code: '128'
+          - preset: aarch64-linux-cuda-121
+            cuda_code: '129'
+    uses: ./.github/workflows/build-any-linux-cuda.yml
+    with:
+      preset: ${{ matrix.preset }}
+      cuda_code: ${{ matrix.cuda_code }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  x86_64-linux-cuda-probe:
+    name: ${{ matrix.preset }}
+    needs:
+      - init
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - preset: x86_64-linux-cuda-probe
+            cuda_code: '129'
+    uses: ./.github/workflows/build-any-linux-cuda.yml
+    with:
+      preset: ${{ matrix.preset }}
       cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
@@ -495,34 +600,52 @@ jobs:
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   x86_64-linux-cuda:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
+    needs:
+      - init
+      - x86_64-linux-cuda-probe
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - preset: x86_64-linux-cuda-75
+            cuda_code: '128'
+          - preset: x86_64-linux-cuda-80
+            cuda_code: '128'
+          - preset: x86_64-linux-cuda-86
+            cuda_code: '128'
+          - preset: x86_64-linux-cuda-89
+            cuda_code: '128'
+          - preset: x86_64-linux-cuda-90
+            cuda_code: '128'
+          - preset: x86_64-linux-cuda-100
+            cuda_code: '128'
+          - preset: x86_64-linux-cuda-120
+            cuda_code: '128'
+          - preset: x86_64-linux-cuda-121
+            cuda_code: '129'
+    uses: ./.github/workflows/build-any-linux-cuda.yml
+    with:
+      preset: ${{ matrix.preset }}
+      cuda_code: ${{ matrix.cuda_code }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  aarch64-windows-cuda-probe:
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
         include:
-          - filter: x86_64-linux-cuda-75
-            cuda_code: '128'
-          - filter: x86_64-linux-cuda-80
-            cuda_code: '128'
-          - filter: x86_64-linux-cuda-86
-            cuda_code: '128'
-          - filter: x86_64-linux-cuda-89
-            cuda_code: '128'
-          - filter: x86_64-linux-cuda-90
-            cuda_code: '128'
-          - filter: x86_64-linux-cuda-100
-            cuda_code: '128'
-          - filter: x86_64-linux-cuda-120
-            cuda_code: '128'
-          - filter: x86_64-linux-cuda-121
-            cuda_code: '129'
-          - filter: x86_64-linux-cuda-probe
-            cuda_code: '129'
-    uses: ./.github/workflows/build-any-linux-cuda.yml
+          - preset: aarch64-windows-cuda-probe
+            cuda_code: '134'
+    uses: ./.github/workflows/build-any-windows-cuda.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
@@ -530,20 +653,38 @@ jobs:
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   aarch64-windows-cuda:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
+    needs:
+      - init
+      - aarch64-windows-cuda-probe
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - preset: aarch64-windows-cuda-13-121
+            cuda_code: '134'
+    uses: ./.github/workflows/build-any-windows-cuda.yml
+    with:
+      preset: ${{ matrix.preset }}
+      cuda_code: ${{ matrix.cuda_code }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  x86_64-windows-cuda-probe:
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
         include:
-          - filter: aarch64-windows-cuda-13-121
-            cuda_code: '134'
-          - filter: aarch64-windows-cuda-probe
-            cuda_code: '134'
+          - preset: x86_64-windows-cuda-probe
+            cuda_code: '129'
     uses: ./.github/workflows/build-any-windows-cuda.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
@@ -551,64 +692,81 @@ jobs:
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   x86_64-windows-cuda:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
+      - x86_64-windows-cuda-probe
     strategy:
       fail-fast: false
       matrix:
         include:
-          - filter: x86_64-windows-cuda-12-75
+          - preset: x86_64-windows-cuda-12-75
             cuda_code: '128'
-          - filter: x86_64-windows-cuda-12-80
+          - preset: x86_64-windows-cuda-12-80
             cuda_code: '128'
-          - filter: x86_64-windows-cuda-12-86
+          - preset: x86_64-windows-cuda-12-86
             cuda_code: '128'
-          - filter: x86_64-windows-cuda-12-89
+          - preset: x86_64-windows-cuda-12-89
             cuda_code: '128'
-          - filter: x86_64-windows-cuda-12-90
+          - preset: x86_64-windows-cuda-12-90
             cuda_code: '128'
-          - filter: x86_64-windows-cuda-12-100
+          - preset: x86_64-windows-cuda-12-100
             cuda_code: '128'
-          - filter: x86_64-windows-cuda-12-120
+          - preset: x86_64-windows-cuda-12-120
             cuda_code: '128'
-          - filter: x86_64-windows-cuda-12-121
+          - preset: x86_64-windows-cuda-12-121
             cuda_code: '129'
-          - filter: x86_64-windows-cuda-13-75
+          - preset: x86_64-windows-cuda-13-75
             cuda_code: '130'
-          - filter: x86_64-windows-cuda-13-80
+          - preset: x86_64-windows-cuda-13-80
             cuda_code: '130'
-          - filter: x86_64-windows-cuda-13-86
+          - preset: x86_64-windows-cuda-13-86
             cuda_code: '130'
-          - filter: x86_64-windows-cuda-13-89
+          - preset: x86_64-windows-cuda-13-89
             cuda_code: '130'
-          - filter: x86_64-windows-cuda-13-90
+          - preset: x86_64-windows-cuda-13-90
             cuda_code: '130'
-          - filter: x86_64-windows-cuda-13-100
+          - preset: x86_64-windows-cuda-13-100
             cuda_code: '130'
-          - filter: x86_64-windows-cuda-13-120
+          - preset: x86_64-windows-cuda-13-120
             cuda_code: '130'
-          - filter: x86_64-windows-cuda-13-121
+          - preset: x86_64-windows-cuda-13-121
             cuda_code: '130'
-          - filter: x86_64-windows-cuda-probe
-            cuda_code: '129'
     uses: ./.github/workflows/build-any-windows-cuda.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
-  x86_64-linux-rocm:
-    name: ${{ matrix.filter }}
+  x86_64-linux-rocm-probe:
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
+          - x86_64-linux-rocm-probe
+    uses: ./.github/workflows/build-any-rocm.yml
+    with:
+      preset: ${{ matrix.preset }}
+      deploy: true
+      llamacpp_repo: ${{ inputs.llamacpp_repo }}
+      llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
+      boringssl_version: ${{ needs.init.outputs.boringssl_version }}
+    secrets: inherit
+  x86_64-linux-rocm:
+    name: ${{ matrix.preset }}
+    needs:
+      - init
+      - x86_64-linux-rocm-probe
+    strategy:
+      fail-fast: false
+      matrix:
+        preset:
           - x86_64-linux-rocm-gfx906
           - x86_64-linux-rocm-gfx90a
           - x86_64-linux-rocm-gfx942
@@ -627,23 +785,22 @@ jobs:
           - x86_64-linux-rocm-gfx1153
           - x86_64-linux-rocm-gfx1200
           - x86_64-linux-rocm-gfx1201
-          - x86_64-linux-rocm-probe
     uses: ./.github/workflows/build-any-rocm.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
       boringssl_version: ${{ needs.init.outputs.boringssl_version }}
     secrets: inherit
   aarch64-macos-metal:
-    name: ${{ matrix.filter }}
+    name: ${{ matrix.preset }}
     needs:
       - init
     strategy:
       fail-fast: false
       matrix:
-        filter:
+        preset:
           - aarch64-macos-metal-m1
           - aarch64-macos-metal-m2
           - aarch64-macos-metal-m3
@@ -652,7 +809,7 @@ jobs:
           - aarch64-macos-metal-a18
     uses: ./.github/workflows/build-any-metal.yml
     with:
-      filter: ${{ matrix.filter }}
+      preset: ${{ matrix.preset }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}

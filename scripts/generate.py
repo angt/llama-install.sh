@@ -643,45 +643,59 @@ def cuda_codes():
             codes.add(preset_cuda_code(preset["name"]))
     return codes
 
-def generate_jobs(workflow_presets):
+def make_matrix(backend, presets):
+    if backend == "cuda":
+        return {"include": [
+            {"preset": f, "cuda_code": preset_cuda_code(f)}
+            for f in presets
+        ]}
+    return {"preset": presets}
+
+def make_job(uses, backend, presets, needs):
+    job = {
+        "name": "${{ matrix.preset }}",
+        "needs": needs,
+        "strategy": {
+            "fail-fast": False,
+            "matrix": make_matrix(backend, presets)
+        },
+        "uses": uses,
+        "with": {
+            "preset": "${{ matrix.preset }}",
+            **({"cuda_code": "${{ matrix.cuda_code }}"} if backend == "cuda" else {}),
+            "deploy": True,
+            "llamacpp_repo": "${{ inputs.llamacpp_repo }}",
+            "llamacpp_version": "${{ needs.init.outputs.llamacpp_version }}",
+            "boringssl_version": "${{ needs.init.outputs.boringssl_version }}",
+        },
+        "secrets": "inherit",
+    }
+    return job
+
+def generate_jobs(configure_presets):
     groups = defaultdict(list)
-    for preset in workflow_presets:
+    for preset in configure_presets:
         parts = preset["name"].split("-")
         group = f"{parts[0]}-{parts[1]}-{parts[2]}"
-        groups[group].append(preset["name"])
+        groups[group].append(preset)
 
     jobs = {}
-    for group, filters in groups.items():
+    test_needs = ["init"]
+    for group, group_presets in groups.items():
         _, os_name, backend = group.split("-")
-        matrix = {"filter": filters}
-        extra = {}
-        if backend == "cuda":
-            matrix = {"include": [
-                {"filter": f, "cuda_code": preset_cuda_code(f)}
-                for f in filters
-            ]}
-            extra = {"cuda_code": "${{ matrix.cuda_code }}"}
         workflow_name = f"{os_name}-{backend}" if backend == "cuda" else backend
-        jobs[group] = {
-            "name": "${{ matrix.filter }}",
-            "needs": ["init"],
-            "strategy": {
-                "fail-fast": False,
-                "matrix": matrix
-            },
-            "uses": f"./.github/workflows/build-any-{workflow_name}.yml",
-            "with": {
-                "filter": "${{ matrix.filter }}",
-                **extra,
-                "deploy": True,
-                "llamacpp_repo": "${{ inputs.llamacpp_repo }}",
-                "llamacpp_version": "${{ needs.init.outputs.llamacpp_version }}",
-                "boringssl_version": "${{ needs.init.outputs.boringssl_version }}",
-            },
-            "secrets": "inherit",
-        }
+        uses = f"./.github/workflows/build-any-{workflow_name}.yml"
+        is_probe = lambda p: "LLAMA_INSTALL_PROBE" in p["cacheVariables"]
+        probes = [p["name"] for p in group_presets if is_probe(p)]
+        llama = [p["name"] for p in group_presets if not is_probe(p)]
+        needs = ["init"]
+        if probes:
+            jobs[f"{group}-probe"] = make_job(uses, backend, probes, ["init"])
+            needs.append(f"{group}-probe")
+        jobs[group] = make_job(uses, backend, llama, needs)
+        test_needs.append(group)
 
-    return jobs
+    return jobs, test_needs
 
 def main():
     download_featcode()
@@ -744,12 +758,12 @@ def main():
     with open(release_path, "r", encoding="utf-8") as f:
         release = yaml.load(f)
 
-    build_jobs = generate_jobs(data.get("workflowPresets", []))
+    build_jobs, test_needs = generate_jobs(data["configurePresets"])
     test_job = release["jobs"]["test"]
-    test_job["needs"] = ["init"] + list(build_jobs.keys())
+    test_job["needs"] = test_needs
 
     release["jobs"] = {
-        **release["jobs"],
+        "init": release["jobs"]["init"],
         **build_jobs,
         "test": test_job,
     }

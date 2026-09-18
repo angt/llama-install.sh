@@ -3,7 +3,7 @@ name: Build any metal
 on:
   workflow_call:
     inputs: &common_inputs
-      filter:
+      preset:
         type: string
         default: 'metal'
       deploy:
@@ -29,15 +29,15 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Build ${{ inputs.filter }}
+      - name: Build ${{ inputs.preset }}
         env:
           LLAMACPP_REPO: ${{ inputs.llamacpp_repo }}
           LLAMACPP_VERSION: ${{ inputs.llamacpp_version }}
           BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
           BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
-          FILTER: ${{ inputs.filter }}
-        run: cmake --workflow --preset "$FILTER"
+          PRESET: ${{ inputs.preset }}
+        run: cmake --workflow --preset "$PRESET"
 
       - name: Deploy
         if: ${{ inputs.deploy && vars.HF_REPO != '' }}

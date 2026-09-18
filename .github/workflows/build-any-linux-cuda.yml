@@ -3,7 +3,7 @@ name: Build any linux cuda
 on:
   workflow_call:
     inputs: &common_inputs
-      filter:
+      preset:
         type: string
         default: 'x86_64-linux-cuda-80'
       cuda_code:
@@ -28,7 +28,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ startsWith(inputs.filter, 'aarch64-') && 'ubuntu-22.04-arm' || 'ubuntu-22.04' }}
+    runs-on: ${{ startsWith(inputs.preset, 'aarch64-') && 'ubuntu-22.04-arm' || 'ubuntu-22.04' }}
     steps:
       - uses: actions/checkout@v5
 
@@ -39,16 +39,16 @@ jobs:
           python scripts/install-cuda.py
           python scripts/install-clang.py cuda
 
-      - name: Build ${{ inputs.filter }}
+      - name: Build ${{ inputs.preset }}
         env:
           LLAMACPP_REPO: ${{ inputs.llamacpp_repo }}
           LLAMACPP_VERSION: ${{ inputs.llamacpp_version }}
           BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
           BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
-          FILTER: ${{ inputs.filter }}
+          PRESET: ${{ inputs.preset }}
         shell: bash
-        run: cmake --workflow --preset "$FILTER"
+        run: cmake --workflow --preset "$PRESET"
 
       - name: Deploy
         if: ${{ inputs.deploy && vars.HF_REPO != '' }}

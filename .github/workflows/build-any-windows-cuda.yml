@@ -3,7 +3,7 @@ name: Build any windows cuda
 on:
   workflow_call:
     inputs: &common_inputs
-      filter:
+      preset:
         type: string
         default: 'x86_64-windows-cuda-12-80'
       cuda_code:
@@ -28,14 +28,14 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ startsWith(inputs.filter, 'aarch64-') && 'windows-11-arm' || 'windows-2022' }}
+    runs-on: ${{ startsWith(inputs.preset, 'aarch64-') && 'windows-11-arm' || 'windows-2022' }}
     steps:
       - uses: actions/checkout@v5
 
       - name: Setup windows env
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: ${{ startsWith(inputs.filter, 'aarch64-') && 'arm64' || 'x64' }}
+          arch: ${{ startsWith(inputs.preset, 'aarch64-') && 'arm64' || 'x64' }}
 
       - name: Install cuda and clang
         env:
@@ -44,15 +44,15 @@ jobs:
           python scripts/install-cuda.py
           python scripts/install-clang.py cuda
 
-      - name: Build ${{ inputs.filter }}
+      - name: Build ${{ inputs.preset }}
         env:
           LLAMACPP_REPO: ${{ inputs.llamacpp_repo }}
           LLAMACPP_VERSION: ${{ inputs.llamacpp_version }}
           BORINGSSL_REPO: ${{ inputs.boringssl_repo }}
           BORINGSSL_VERSION: ${{ inputs.boringssl_version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
-          FILTER: ${{ inputs.filter }}
-        run: cmake --workflow --preset "$env:FILTER"
+          PRESET: ${{ inputs.preset }}
+        run: cmake --workflow --preset "$env:PRESET"
 
       - name: Deploy
         if: ${{ inputs.deploy && vars.HF_REPO != '' }}
