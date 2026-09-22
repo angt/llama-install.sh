@@ -31,7 +31,7 @@ jobs:
       matrix:
         backend:
           - id: gfx1151
-            runner: [self-hosted, gfx1151]
+            runner: [self-hosted, Linux, devlab-dispatch, strix-halo]
             container: ''
           - id: gfx1201
             runner:
