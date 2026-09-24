@@ -1,7 +1,7 @@
 import sys
 import time
-import httpx
 from huggingface_hub import HfApi, set_client_factory, utils
+from huggingface_hub.utils import httpx
 
 
 class RetryTransport(httpx.BaseTransport):
