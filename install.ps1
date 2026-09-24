@@ -62,6 +62,24 @@ function ProbeCUDA {
     Download "llama.exe" "$ARCH/windows/cuda/$MAJOR/$CONFIG/llama-app.exe.zst" | Out-Null
 }
 
+function ProbeROCm {
+    if ($env:SKIP_ROCM) { return }
+    "Probing ROCm..."
+    if (!(Download "rocm-probe.exe" "$ARCH/windows/rocm/probe/probe.exe.zst")) { return }
+    $CONFIG = & "$DIR\rocm-probe.exe" 2>$null
+    if ($LASTEXITCODE -eq 5) {
+        "AMD GPU detected, but the HIP SDK is not installed."
+        "To enable ROCm acceleration, install it from:"
+        ""
+        "  https://rocm.docs.amd.com/projects/install-on-windows/en/latest/install/install.html"
+        ""
+        return
+    }
+    if ($LASTEXITCODE) { return }
+    "Found: $CONFIG"
+    Download "llama.exe" "$ARCH/windows/rocm/$CONFIG/llama-app.exe.zst" | Out-Null
+}
+
 function ProbeVulkan {
     if ($env:SKIP_VULKAN) { return }
     "Probing Vulkan..."
@@ -100,6 +118,7 @@ function Main {
     New-Item -Path $DIR -Force -ItemType "Directory" | Out-Null
 
     if (!(Test-Path "$DIR\llama.exe")) { ProbeCUDA   }
+    if (!(Test-Path "$DIR\llama.exe")) { ProbeROCm   }
     if (!(Test-Path "$DIR\llama.exe")) { ProbeVulkan }
     if (!(Test-Path "$DIR\llama.exe")) { ProbeCPU    }
     if (!(Test-Path "$DIR\llama.exe")) {
