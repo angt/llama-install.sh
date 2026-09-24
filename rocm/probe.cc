@@ -5,6 +5,10 @@
 #include <sys/epoll.h>
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 int
 main(void)
 {
@@ -21,22 +25,25 @@ main(void)
     if (hipGetDeviceCount(&count) != hipSuccess || !count)
         return 1;
 
-    for (int i = 0; i < count; i++) {
+    const char *name = NULL;
+
+    for (int i = 0; !name && i < count; i++) {
         hipDeviceProp_t prop;
 
-        if (hipGetDeviceProperties(&prop, i) != hipSuccess)
-            continue;
-
-        const char *name = prop.gcnArchName;
-
-        if (!name)
-            continue;
-
-        for (; *name && *name != ':'; name++)
-            std::putchar(*name);
-
-        std::putchar('\n');
-        return 0;
+        if (hipGetDeviceProperties(&prop, i) == hipSuccess)
+            name = prop.gcnArchName;
     }
-    return 2;
+    if (!name)
+        return 2;
+
+#ifdef _WIN32
+    if (!LoadLibraryW(L"hipblas.dll"))
+        return 5;
+#endif
+
+    for (; *name && *name != ':'; name++)
+        std::putchar(*name);
+
+    std::putchar('\n');
+    return 0;
 }
