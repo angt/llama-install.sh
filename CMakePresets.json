@@ -3539,7 +3539,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx906",
+        "GPU_TARGETS": "gfx906",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3554,7 +3554,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx90a",
+        "GPU_TARGETS": "gfx90a",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3569,7 +3569,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx942",
+        "GPU_TARGETS": "gfx942",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3584,7 +3584,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx950",
+        "GPU_TARGETS": "gfx950",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3599,7 +3599,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1030",
+        "GPU_TARGETS": "gfx1030",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3614,7 +3614,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1031",
+        "GPU_TARGETS": "gfx1031",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3629,7 +3629,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1032",
+        "GPU_TARGETS": "gfx1032",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3644,7 +3644,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1011",
+        "GPU_TARGETS": "gfx1011",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3659,7 +3659,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1100",
+        "GPU_TARGETS": "gfx1100",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3674,7 +3674,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1101",
+        "GPU_TARGETS": "gfx1101",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3689,7 +3689,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1102",
+        "GPU_TARGETS": "gfx1102",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3704,7 +3704,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1103",
+        "GPU_TARGETS": "gfx1103",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3719,7 +3719,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1150",
+        "GPU_TARGETS": "gfx1150",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3734,7 +3734,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1151",
+        "GPU_TARGETS": "gfx1151",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3749,7 +3749,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1152",
+        "GPU_TARGETS": "gfx1152",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3764,7 +3764,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1153",
+        "GPU_TARGETS": "gfx1153",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3779,7 +3779,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1200",
+        "GPU_TARGETS": "gfx1200",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3794,7 +3794,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1201",
+        "GPU_TARGETS": "gfx1201",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3821,7 +3821,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx906",
+        "GPU_TARGETS": "gfx906",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3836,7 +3836,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx90a",
+        "GPU_TARGETS": "gfx90a",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3851,7 +3851,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx942",
+        "GPU_TARGETS": "gfx942",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3866,7 +3866,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx950",
+        "GPU_TARGETS": "gfx950",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3881,7 +3881,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1030",
+        "GPU_TARGETS": "gfx1030",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3896,7 +3896,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1031",
+        "GPU_TARGETS": "gfx1031",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3911,7 +3911,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1032",
+        "GPU_TARGETS": "gfx1032",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3926,7 +3926,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "OFF",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1011",
+        "GPU_TARGETS": "gfx1011",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3941,7 +3941,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1100",
+        "GPU_TARGETS": "gfx1100",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3956,7 +3956,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1101",
+        "GPU_TARGETS": "gfx1101",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3971,7 +3971,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1102",
+        "GPU_TARGETS": "gfx1102",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -3986,7 +3986,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1103",
+        "GPU_TARGETS": "gfx1103",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -4001,7 +4001,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1150",
+        "GPU_TARGETS": "gfx1150",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -4016,7 +4016,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1151",
+        "GPU_TARGETS": "gfx1151",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -4031,7 +4031,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1152",
+        "GPU_TARGETS": "gfx1152",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -4046,7 +4046,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1153",
+        "GPU_TARGETS": "gfx1153",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -4061,7 +4061,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1200",
+        "GPU_TARGETS": "gfx1200",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",
@@ -4076,7 +4076,7 @@
         "LLAMA_INSTALL_ARCH": "x86_64",
         "GGML_HIP": "ON",
         "GGML_HIP_ROCWMMA_FATTN": "ON",
-        "CMAKE_HIP_ARCHITECTURES": "gfx1201",
+        "GPU_TARGETS": "gfx1201",
         "LLAMA_INSTALL_FLAGS": "-march=x86-64-v3"
       },
       "toolchainFile": "toolchains/rocm.cmake",

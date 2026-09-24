@@ -337,7 +337,7 @@ def generate_x86_64_rocm_presets(os_name):
         cache = {
             "GGML_HIP": "ON",
             "GGML_HIP_ROCWMMA_FATTN": "ON" if rocwmma(arch) else "OFF",
-            "CMAKE_HIP_ARCHITECTURES": name,
+            "GPU_TARGETS": name,
             "LLAMA_INSTALL_FLAGS": BASELINE_FLAGS["x86_64"],
         }
         configs.append((name, cache))
