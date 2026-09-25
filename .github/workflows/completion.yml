@@ -28,7 +28,7 @@ jobs:
             install: sh install.sh
           - id: windows
             runner: [self-hosted, Windows, devlab-dispatch, strix-halo]
-            install: pwsh install.ps1
+            install: powershell install.ps1
         model:
           - unsloth/Qwen3.5-0.8B-GGUF
         quant:
