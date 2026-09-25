@@ -17,14 +17,18 @@ permissions:
 
 jobs:
   completion:
-    name: ${{ matrix.model }}:${{ matrix.quant }}
-    runs-on:
-      group: ggml-hfc-amd-r9700-1gpu
-    container:
-      image: rocm/pytorch:rocm6.4_ubuntu24.04_py3.12_pytorch_release_2.6.0
+    name: ${{ matrix.backend.id }}:${{ matrix.model }}:${{ matrix.quant }}
+    runs-on: ${{ matrix.backend.runner }}
     strategy:
       fail-fast: false
       matrix:
+        backend:
+          - id: linux
+            runner: [self-hosted, Linux, devlab-dispatch, strix-halo]
+            install: sh install.sh
+          - id: windows
+            runner: [self-hosted, Windows, devlab-dispatch, strix-halo]
+            install: pwsh install.ps1
         model:
           - unsloth/Qwen3.5-0.8B-GGUF
         quant:
@@ -47,10 +51,11 @@ jobs:
           LLAMA_BUCKET: ${{ vars.HF_REPO }}
           LLAMA_VERSION: ${{ inputs.version }}
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
-        run: SKIP_INSTALL=1 sh install.sh
+        run: ${{ matrix.backend.install }}
 
-      - name: Download model
-        id: download
+      - name: Download model (linux)
+        id: download-linux
+        if: runner.os == 'Linux'
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
           MODEL: ${{ matrix.model }}
@@ -62,16 +67,40 @@ jobs:
                echo "present=false"
           fi >> "$GITHUB_OUTPUT"
 
-      - name: Completion
-        if: steps.download.outputs.present == 'true'
+      - name: Download model (windows)
+        id: download-windows
+        if: runner.os == 'Windows'
         env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
           MODEL: ${{ matrix.model }}
           QUANT: ${{ matrix.quant }}
         run: |
+          llama download -hf "${env:MODEL}:${env:QUANT}" > $null
+          if ($LASTEXITCODE -eq 0) {
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "present=true"
+          } else {
+            [Console]::Error.WriteLine("::notice::${env:MODEL}:${env:QUANT} not present, skipping")
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "present=false"
+          }
+
+      - name: Completion (linux)
+        if: runner.os == 'Linux' && steps.download-linux.outputs.present == 'true'
+        env:
+          MODEL: ${{ matrix.model }}
+          QUANT: ${{ matrix.quant }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
+        run: |
           for UB in 512 1024 2048 4096
-          do ~/.llama-app/llama completion \
-              --offline -no-cnv -hf "$MODEL:$QUANT" \
-              -c 8192 -b 4096 --no-display-prompt --ignore-eos \
-              -s 1234 -n 48 --temp 0 -f data/prompt.txt \
-              -ub "$UB"
+          do ~/.llama-app/llama completion --offline -no-cnv -hf "$MODEL:$QUANT" -c 8192 -b 4096 --no-display-prompt --ignore-eos -s 1234 -n 48 --temp 0 -f data/prompt.txt -ub "$UB"
           done
+
+      - name: Completion (windows)
+        if: runner.os == 'Windows' && steps.download-windows.outputs.present == 'true'
+        env:
+          MODEL: ${{ matrix.model }}
+          QUANT: ${{ matrix.quant }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
+        run: |
+          foreach ($UB in 512,1024,2048,4096) {
+            llama completion --offline -no-cnv -hf "${env:MODEL}:${env:QUANT}" -c 8192 -b 4096 --no-display-prompt --ignore-eos -s 1234 -n 48 --temp 0 -f data/prompt.txt -ub $UB
+          }
