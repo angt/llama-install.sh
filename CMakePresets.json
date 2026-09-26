@@ -4173,7 +4173,7 @@
         "GGML_METAL_EMBED_LIBRARY": "ON",
         "GGML_METAL_USE_BF16": "ON",
         "CMAKE_OSX_ARCHITECTURES": "arm64",
-        "CMAKE_OSX_DEPLOYMENT_TARGET": "16.0",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "26.0",
         "LLAMA_INSTALL_FLAGS": "-mcpu=apple-m4"
       },
       "toolchainFile": "toolchains/base.cmake",
