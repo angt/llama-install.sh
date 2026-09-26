@@ -42,10 +42,10 @@ jobs:
           PRESET: ${{ inputs.preset }}
         run: |
           $Gfx = "$env:PRESET".Split('-')[-1]
-          $Rocm = switch -Regex ($Gfx) {
-            ('^probe$')  { 'rocm[devel,libraries]' }
-            ('^gfx\d+$') { "rocm[devel,libraries,device-$Gfx]" }
-            default      { 'rocm[devel,libraries,device-all]' }
+          $Rocm = switch -Wildcard ($Gfx) {
+            ('probe') { "rocm[devel,libraries]" }
+            ('gfx*')  { "rocm[devel,libraries,device-$Gfx]" }
+            default   { "rocm[devel,libraries,device-all]" }
           }
           pip install --extra-index-url https://nightly.repo.amd.com/rocm/whl-next/ "$Rocm==$env:ROCM_VERSION"
           rocm-sdk init
