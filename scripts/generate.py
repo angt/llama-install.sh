@@ -93,7 +93,7 @@ METAL_ARCHS = {
     "m2":  ("13.3", False, None),
     "m3":  ("14.0", True,  None),
     "m4":  ("15.0", True,  None),
-    "m5":  ("16.0", True,  "m4"),
+    "m5":  ("26.0", True,  "m4"),
     "a18": ("15.0", True,  None),
 }
 
