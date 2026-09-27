@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: windows-2022
     env:
-      ROCM_VERSION: "10.2.0a20260916"
+      ROCM_VERSION: "10.2.0a20260927"
 
     steps:
       - uses: actions/checkout@v5
