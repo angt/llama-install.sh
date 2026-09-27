@@ -25,4 +25,6 @@
 | windows | `x86_64`  | `cuda/12`    | Windows 8  | `cublas64_12.dll` `nvcuda.dll`                         |
 | windows | `x86_64`  | `cuda/13`    | Windows 8  | `cublas64_13.dll`                                      |
 | windows | `x86_64`  | `cuda/probe` | Windows 7  | `nvcuda.dll`                                           |
+| windows | `x86_64`  | `rocm`       | Windows 8  | `amdhip64_7.dll` `hipblas.dll`                         |
+| windows | `x86_64`  | `rocm/probe` | Windows 7  | `amdhip64_7.dll`                                       |
 | windows | `x86_64`  | `vulkan`     | Windows 8  | `vulkan-1.dll`                                         |
