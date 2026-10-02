@@ -353,8 +353,10 @@ def generate_x86_64_rocm_presets(os_name):
 def generate_x86_64_rocm_probe_preset(os_name):
     configs = []
     name = "probe"
+    arch = ROCM_ARCHS[0]
     cache = {
         "LLAMA_INSTALL_PROBE": "rocm",
+        "GPU_TARGETS": f"gfx{arch}",
     }
     configs.append((name, cache))
 

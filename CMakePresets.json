@@ -3807,7 +3807,8 @@
         "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/linux/rocm/probe",
         "LLAMA_INSTALL_OS": "linux",
         "LLAMA_INSTALL_ARCH": "x86_64",
-        "LLAMA_INSTALL_PROBE": "rocm"
+        "LLAMA_INSTALL_PROBE": "rocm",
+        "GPU_TARGETS": "gfx906"
       },
       "toolchainFile": "toolchains/rocm.cmake",
       "generator": "Ninja"
@@ -4089,7 +4090,8 @@
         "LLAMA_INSTALL_DIR": "${sourceDir}/output/x86_64/windows/rocm/probe",
         "LLAMA_INSTALL_OS": "windows",
         "LLAMA_INSTALL_ARCH": "x86_64",
-        "LLAMA_INSTALL_PROBE": "rocm"
+        "LLAMA_INSTALL_PROBE": "rocm",
+        "GPU_TARGETS": "gfx906"
       },
       "toolchainFile": "toolchains/rocm.cmake",
       "generator": "Ninja"
