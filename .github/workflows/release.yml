@@ -68,12 +68,19 @@ jobs:
 
       - name: Build UI assets
         if: ${{ vars.HF_REPO != '' }}
+        env:
+          VERSION: ${{ steps.llamacpp.outputs.llamacpp_version }}
         run: |
           cmake -DUI_SOURCE_DIR=deps/llamacpp/tools/ui \
-                -DUI_BINARY_DIR=output \
+                -DUI_BINARY_DIR=build/ui \
                 -DLLAMA_SOURCE_DIR=deps/llamacpp \
-                -DBUILD_UI=ON -DHF_ENABLED=OFF -DLLAMA_UI_GZIP=ON \
+                -DHF_VERSION="$VERSION" \
+                -DLLAMA_BUILD_NUMBER="$VERSION" \
+                -DBUILD_UI=ON -DHF_ENABLED=OFF \
                 -P deps/llamacpp/scripts/ui-assets.cmake
+          mkdir -p output
+          tar -czf output/dist.tar.gz -C build/ui/dist .
+          (cd output && sha256sum dist.tar.gz > dist.tar.gz.sha256)
 
       - name: Upload artefacts
         if: ${{ vars.HF_REPO != '' }}
