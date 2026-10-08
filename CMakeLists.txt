@@ -67,22 +67,12 @@ set(GGML_NATIVE OFF CACHE BOOL "" FORCE)
 set(GGML_OPENMP OFF CACHE BOOL "" FORCE)
 set(GGML_LTO    OFF CACHE BOOL "" FORCE)
 
+set(LLAMA_BUILD_BORINGSSL ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_COMMON    ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_TOOLS     ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_SERVER    ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_APP       ON  CACHE BOOL "" FORCE)
-
-if(NOT DEFINED LLAMA_BUILD_BORINGSSL)
-    set(LLAMA_BUILD_BORINGSSL ON CACHE BOOL "" FORCE)
-endif()
-
-if(NOT DEFINED LLAMA_USE_PREBUILT_UI)
-    set(LLAMA_USE_PREBUILT_UI OFF CACHE BOOL "" FORCE)
-endif()
-
-if(NOT "$ENV{HF_REPO}" STREQUAL "")
-    set(LLAMA_UI_HF_BUCKET "$ENV{HF_REPO}" CACHE STRING "ui assets bucket")
-endif()
+set(LLAMA_BUILD_UI        OFF CACHE BOOL "" FORCE)
 
 # LibreSSL is supported as an alternative SSL backend in this cross Zig
 # pipeline. It needs a few knobs to build cleanly when selected with
