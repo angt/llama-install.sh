@@ -74,6 +74,10 @@ set(LLAMA_BUILD_SERVER    ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_APP       ON  CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_UI        OFF CACHE BOOL "" FORCE)
 
+if(DEFINED ENV{HF_REPO})
+    set(LLAMA_UI_HF_BUCKET "$ENV{HF_REPO}")
+endif()
+
 # LibreSSL is supported as an alternative SSL backend in this cross Zig
 # pipeline. It needs a few knobs to build cleanly when selected with
 # -DLLAMA_BUILD_LIBRESSL=ON -DLLAMA_BUILD_BORINGSSL=OFF.
