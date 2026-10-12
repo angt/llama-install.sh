@@ -38,8 +38,10 @@ probe_setup(struct probe *p)
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pApplicationInfo = &appInfo,
     };
-    if (vkCreateInstance(&createInfo, NULL, &p->instance) != VK_SUCCESS)
+    if (vkCreateInstance(&createInfo, NULL, &p->instance) != VK_SUCCESS) {
+        p->instance = VK_NULL_HANDLE;
         return 1;
+    }
 
     if (vkEnumeratePhysicalDevices(p->instance, &p->count, NULL) != VK_SUCCESS || !p->count)
         return 2;
