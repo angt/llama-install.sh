@@ -51,3 +51,17 @@ vkGetPhysicalDeviceQueueFamilyProperties(VkPhysicalDevice pd, uint32_t *u, VkQue
 {
     if (u) *u = 0;
 }
+
+VK_STUB_ENTRY(VkResult)
+vkCreateDevice(VkPhysicalDevice pd, const VkDeviceCreateInfo *dc, const VkAllocationCallbacks *ac, VkDevice *d)
+{
+    return VK_ERROR_INITIALIZATION_FAILED;
+}
+
+VK_STUB_ENTRY(void)
+vkDestroyDevice(VkDevice d, const VkAllocationCallbacks *ac)
+{ }
+
+VK_STUB_ENTRY(void)
+vkDestroyInstance(VkInstance i, const VkAllocationCallbacks *ac)
+{ }
