@@ -57,10 +57,10 @@ jobs:
           "HIP_DEVICE_LIB_PATH=$Root\lib\llvm\amdgcn\bitcode" >> $env:GITHUB_ENV
 
       - name: Setup Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
-          distribution: temurin
-          java-version: "21"
+          distribution: zulu
+          java-version: "25"
 
       - name: Build ${{ inputs.preset }}
         env:
