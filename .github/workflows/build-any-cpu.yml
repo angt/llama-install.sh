@@ -35,6 +35,13 @@ jobs:
       - name: Setup Zig
         run: python scripts/install-zig.py
 
+      - name: Setup Java
+        if: ${{ contains(inputs.preset, '-windows-') }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
       - name: Build ${{ inputs.preset }}
         env:
           LLAMACPP_REPO: ${{ inputs.llamacpp_repo }}
@@ -44,6 +51,12 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
           HF_REPO: ${{ vars.HF_REPO }}
           PRESET: ${{ inputs.preset }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TS_ENDPOINT: ${{ secrets.AZURE_TS_ENDPOINT }}
+          AZURE_TS_ACCOUNT_NAME: ${{ secrets.AZURE_TS_ACCOUNT_NAME }}
+          AZURE_TS_PROFILE_NAME: ${{ secrets.AZURE_TS_PROFILE_NAME }}
         run: cmake --workflow --preset "$PRESET"
 
       - name: Deploy
