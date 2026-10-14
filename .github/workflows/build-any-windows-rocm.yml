@@ -56,6 +56,12 @@ jobs:
           "HIP_PATH=$Root" >> $env:GITHUB_ENV
           "HIP_DEVICE_LIB_PATH=$Root\lib\llvm\amdgcn\bitcode" >> $env:GITHUB_ENV
 
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: zulu
+          java-version: "25"
+
       - name: Build ${{ inputs.preset }}
         env:
           LLAMACPP_REPO: ${{ inputs.llamacpp_repo }}
@@ -65,6 +71,12 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN_READ }}
           HF_REPO: ${{ vars.HF_REPO }}
           PRESET: ${{ inputs.preset }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TS_ENDPOINT: ${{ secrets.AZURE_TS_ENDPOINT }}
+          AZURE_TS_ACCOUNT_NAME: ${{ secrets.AZURE_TS_ACCOUNT_NAME }}
+          AZURE_TS_PROFILE_NAME: ${{ secrets.AZURE_TS_PROFILE_NAME }}
         run: cmake --workflow --preset "$env:PRESET"
 
       - name: Deploy
