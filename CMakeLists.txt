@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 project(llama-install LANGUAGES C CXX)
 
-find_program(ZSTD zstd REQUIRED)
-
 include(FetchContent)
 
 function(FetchDep NAME DEFAULT_REPO DEFAULT_TAG)
@@ -151,20 +149,26 @@ else()
     set(LLAMA_INSTALL_EXE_SUFFIX "")
 endif()
 
-set(LLAMA_INSTALL_FILE "${LLAMA_INSTALL_DIR}/${LLAMA_INSTALL_TARGET}${LLAMA_INSTALL_EXE_SUFFIX}.zst")
-set(LLAMA_INSTALL_STAMP "${CMAKE_BINARY_DIR}/${LLAMA_INSTALL_TARGET}.zst.done")
+if(DEFINED ENV{GITHUB_ACTIONS})
+    find_program(ZSTD zstd REQUIRED)
 
-if(WIN32)
-    find_program(PYTHON NAMES python3 python REQUIRED)
-    set(LLAMA_INSTALL_SIGN COMMAND ${PYTHON} ${CMAKE_CURRENT_LIST_DIR}/scripts/sign.py $<TARGET_FILE:${LLAMA_INSTALL_TARGET}>)
+    set(LLAMA_INSTALL_FILE "${LLAMA_INSTALL_DIR}/${LLAMA_INSTALL_TARGET}${LLAMA_INSTALL_EXE_SUFFIX}.zst")
+    set(LLAMA_INSTALL_STAMP "${CMAKE_BINARY_DIR}/${LLAMA_INSTALL_TARGET}.zst.done")
+
+    if(WIN32)
+        find_program(PYTHON NAMES python3 python REQUIRED)
+        set(LLAMA_INSTALL_SIGN COMMAND ${PYTHON} ${CMAKE_CURRENT_LIST_DIR}/scripts/sign.py $<TARGET_FILE:${LLAMA_INSTALL_TARGET}>)
+    endif()
+
+    add_custom_command(
+        OUTPUT  ${LLAMA_INSTALL_STAMP}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${LLAMA_INSTALL_DIR}
+        ${LLAMA_INSTALL_SIGN}
+        COMMAND ${ZSTD} -f --rm -19 $<TARGET_FILE:${LLAMA_INSTALL_TARGET}> -o ${LLAMA_INSTALL_FILE}
+        COMMAND ${CMAKE_COMMAND} -E touch ${LLAMA_INSTALL_STAMP}
+        DEPENDS ${LLAMA_INSTALL_TARGET}
+    )
+    add_custom_target(llama-install DEPENDS ${LLAMA_INSTALL_STAMP})
+else()
+    add_custom_target(llama-install)
 endif()
-
-add_custom_command(
-    OUTPUT  ${LLAMA_INSTALL_STAMP}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${LLAMA_INSTALL_DIR}
-    ${LLAMA_INSTALL_SIGN}
-    COMMAND ${ZSTD} -f --rm -19 $<TARGET_FILE:${LLAMA_INSTALL_TARGET}> -o ${LLAMA_INSTALL_FILE}
-    COMMAND ${CMAKE_COMMAND} -E touch ${LLAMA_INSTALL_STAMP}
-    DEPENDS ${LLAMA_INSTALL_TARGET}
-)
-add_custom_target(llama-install DEPENDS ${LLAMA_INSTALL_STAMP})
