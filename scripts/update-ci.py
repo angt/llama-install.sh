@@ -14,8 +14,10 @@ CLANG_CUDA_MAX = install_clang.CLANG_CUDA_MAX
 
 updates = {}
 
-with urlopen("https://ziglang.org/download/index.json") as r:
-    zig_version = json.load(r)['master']['version']
+#with urlopen("https://ziglang.org/download/index.json") as r:
+#    zig_version = json.load(r)['master']['version']
+
+zig_version = "0.17.0"
 
 with urlopen("https://vulkan.lunarg.com/sdk/latest/linux.txt") as r:
     vulkan_version = r.read().decode().strip()
