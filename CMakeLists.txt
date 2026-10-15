@@ -19,16 +19,23 @@ function(FetchDep NAME DEFAULT_REPO DEFAULT_TAG)
     set(${NAME_UPPER}_TAG "${DEFAULT_TAG}" CACHE STRING "${NAME} git tag")
     message(STATUS "${NAME} tag: ${${NAME_UPPER}_TAG}")
 
-    if(EXISTS "${CMAKE_SOURCE_DIR}/deps/${NAME}/CMakeLists.txt")
+    if(NOT "$ENV{${NAME_UPPER}_SOURCE_DIR}" STREQUAL "")
+        set(DEP_SOURCE_DIR "$ENV{${NAME_UPPER}_SOURCE_DIR}")
+    else()
+        set(DEP_SOURCE_DIR "${CMAKE_SOURCE_DIR}/deps/${NAME}")
+    endif()
+    message(STATUS "${NAME} source dir: ${DEP_SOURCE_DIR}")
+
+    if(EXISTS "${DEP_SOURCE_DIR}/CMakeLists.txt")
         FetchContent_Declare(${NAME}
-            SOURCE_DIR "${CMAKE_SOURCE_DIR}/deps/${NAME}"
+            SOURCE_DIR "${DEP_SOURCE_DIR}"
             ${ARGN}
         )
     else()
         FetchContent_Declare(${NAME}
             GIT_REPOSITORY "${${NAME_UPPER}_REPO}"
             GIT_TAG        "${${NAME_UPPER}_TAG}"
-            SOURCE_DIR     "${CMAKE_SOURCE_DIR}/deps/${NAME}"
+            SOURCE_DIR     "${DEP_SOURCE_DIR}"
             ${ARGN}
         )
     endif()
