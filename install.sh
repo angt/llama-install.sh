@@ -141,11 +141,10 @@ main() {
 		return
 	fi
 
-	VERSION=$(~/.llama-app/llama version 2>&1) || die \
+	VERSION=$(~/.llama-app/llama version) || die \
 		"Downloaded llama binary failed to run"
 
 	case "$VERSION" in
-	("$LLAMA_VERSION"-*) ;;
 	(*"build ${LLAMA_VERSION#b}"*) ;;
 	(*) die "Version mismatch: expected $LLAMA_VERSION, got $VERSION" ;;
 	esac
