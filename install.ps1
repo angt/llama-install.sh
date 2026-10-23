@@ -129,13 +129,13 @@ function Main {
         "Installation skipped, SKIP_INSTALL is set"
         return
     }
-    $Version = (& "$DIR\llama.exe" version 2>&1) | Out-String
+    $Version = (& "$DIR\llama.exe" version) | Out-String
 
     if ($LASTEXITCODE) {
         Die "Downloaded llama binary failed to run"
     }
     $BUILD = $LLAMA_VERSION -replace "^b", ""
-    if ("$Version" -notlike "$LLAMA_VERSION-*" -and "$Version" -notlike "*build $BUILD*") {
+    if ("$Version" -notlike "*build $BUILD*") {
         Die "Version mismatch: expected $LLAMA_VERSION, got $Version"
     }
     if (Test-Path "$INSTALL_DIR\llama.exe") {
