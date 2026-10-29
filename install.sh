@@ -144,8 +144,14 @@ main() {
 	VERSION=$(~/.llama-app/llama version) || die \
 		"Downloaded llama binary failed to run"
 
+	case "$LLAMA_VERSION" in (b|g|b*[!0-9]*|g*[!0-9a-f]*) ;;
+	(b*) STAMP="build ${LLAMA_VERSION#b},"  ;;
+	(g*) STAMP="commit ${LLAMA_VERSION#g})" ;;
+	esac
+	[ "$STAMP" ] || die "Invalid version: $LLAMA_VERSION"
+
 	case "$VERSION" in
-	(*"build ${LLAMA_VERSION#b}"*) ;;
+	(*"$STAMP"*) ;;
 	(*) die "Version mismatch: expected $LLAMA_VERSION, got $VERSION" ;;
 	esac
 
