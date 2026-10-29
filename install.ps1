@@ -134,8 +134,14 @@ function Main {
     if ($LASTEXITCODE) {
         Die "Downloaded llama binary failed to run"
     }
-    $BUILD = $LLAMA_VERSION -replace "^b", ""
-    if ("$Version" -notlike "*build $BUILD*") {
+    if ($LLAMA_VERSION -match "^b([0-9]+)$") {
+        $STAMP = "build $($Matches[1]),"
+    } elseif ($LLAMA_VERSION -match "^g([0-9a-f]+)$") {
+        $STAMP = "commit $($Matches[1]))"
+    } else {
+        Die "Invalid version: $LLAMA_VERSION"
+    }
+    if (!$Version.Contains($STAMP)) {
         Die "Version mismatch: expected $LLAMA_VERSION, got $Version"
     }
     if (Test-Path "$INSTALL_DIR\llama.exe") {
