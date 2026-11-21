@@ -291,6 +291,7 @@ def generate_presets(os_name, arch, backend, toolchain, configs):
                 "LLAMA_INSTALL_DIR": f"${{sourceDir}}/output/{preset_path}",
                 "LLAMA_INSTALL_OS": os_name,
                 "LLAMA_INSTALL_ARCH": arch,
+                "LLAMA_INSTALL_BACKEND": backend,
             } | config_cache,
             "toolchainFile": toolchain,
             "generator": "Ninja",
@@ -338,6 +339,7 @@ def generate_x86_64_rocm_presets(os_name):
             "GGML_HIP": "ON",
             "GGML_HIP_ROCWMMA_FATTN": "ON" if rocwmma(arch) else "OFF",
             "GPU_TARGETS": name,
+            "LLAMA_INSTALL_DEVICE": name,
             "LLAMA_INSTALL_FLAGS": BASELINE_FLAGS["x86_64"],
         }
         configs.append((name, cache))
@@ -356,6 +358,7 @@ def generate_x86_64_rocm_probe_preset(os_name):
     arch = ROCM_ARCHS[0]
     cache = {
         "LLAMA_INSTALL_PROBE": "rocm",
+        "LLAMA_INSTALL_DEVICE": "probe",
         "GPU_TARGETS": f"gfx{arch}",
     }
     configs.append((name, cache))
@@ -375,6 +378,7 @@ def generate_linux_cuda_presets(arch):
         cache = {
             "GGML_CUDA": "ON",
             "GGML_STATIC": "ON",
+            "LLAMA_INSTALL_VERSION": cuda_build_code(None, arch, "linux", cuda_arch),
             "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
             "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
             "CMAKE_CUDA_FLAGS": f"-isystem ${{sourceDir}}/deps/cuda/include",
@@ -397,6 +401,7 @@ def generate_linux_cuda_probe_preset(arch):
         "LLAMA_INSTALL_PROBE": "cuda",
         "LLAMA_INSTALL_PROBE_ARCHS": ",".join(CUDA_ARCHS),
         "LLAMA_INSTALL_PROBE_VERSIONS": ",".join(CUDA_ARCHS.values()),
+        "LLAMA_INSTALL_VERSION": cuda_build_code(None, arch, "linux"),
         "CMAKE_CUDA_ARCHITECTURES": ";".join(CUDA_ARCHS), # useless
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include",
@@ -432,6 +437,7 @@ def generate_windows_cuda_presets(arch):
             cache = {
                 "GGML_CUDA": "ON",
                 "GGML_STATIC": "ON",
+                "LLAMA_INSTALL_VERSION": cuda_build_code(major, arch, "windows", cuda_arch),
                 "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
                 "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
                 "CMAKE_CUDA_FLAGS": f"-diag-suppress 221 -isystem ${{sourceDir}}/deps/cuda/include",
@@ -454,6 +460,7 @@ def generate_windows_cuda_probe_preset(arch):
         "LLAMA_INSTALL_PROBE": "cuda",
         "LLAMA_INSTALL_PROBE_ARCHS": ",".join(CUDA_ARCHS),
         "LLAMA_INSTALL_PROBE_VERSIONS": ",".join(CUDA_ARCHS.values()),
+        "LLAMA_INSTALL_VERSION": cuda_build_code(None, arch, "windows"),
         "CMAKE_CUDA_ARCHITECTURES": ";".join(CUDA_ARCHS), # useless
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
         "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include",
@@ -623,12 +630,6 @@ def cuda_build_code(major, arch, os_name=None, cuda_arch=None):
         code = max(code, int(CUDA_PLATFORM_MIN.get((os_name, arch), ("", "0"))[1]))
     return str(code)
 
-def preset_cuda_code(preset_name):
-    arch, os_name, _, *rest = preset_name.split("-")
-    major = rest[0] if len(rest) > 1 else None
-    cuda_arch = rest[-1] if rest and rest[-1] in CUDA_ARCHS else None
-    return cuda_build_code(major, arch, os_name, cuda_arch)
-
 def generate_cuda_presets():
     presets = []
     for arch in ['aarch64', 'x86_64']:
@@ -640,31 +641,22 @@ def generate_cuda_presets():
 def cuda_codes():
     # CUDA redist codes needed by the generated presets (incl. the CUDA_ARCHS baseline)
     codes = set(CUDA_ARCHS.values())
-    for _, _, workflow in generate_cuda_presets():
-        for preset in workflow:
-            codes.add(preset_cuda_code(preset["name"]))
+    for configure, _, _ in generate_cuda_presets():
+        for preset in configure:
+            codes.add(preset["cacheVariables"]["LLAMA_INSTALL_VERSION"])
     return codes
 
-def make_matrix(backend, presets):
-    if backend == "cuda":
-        return {"include": [
-            {"preset": f, "cuda_code": preset_cuda_code(f)}
-            for f in presets
-        ]}
-    return {"preset": presets}
-
-def make_job(uses, backend, presets, needs):
+def make_job(uses, presets, needs):
     return {
         "name": "${{ matrix.preset }}",
         "needs": needs,
         "strategy": {
             "fail-fast": False,
-            "matrix": make_matrix(backend, presets)
+            "matrix": {"preset": presets}
         },
         "uses": uses,
         "with": {
             "preset": "${{ matrix.preset }}",
-            **({"cuda_code": "${{ matrix.cuda_code }}"} if backend == "cuda" else {}),
             "deploy": True,
             "llamacpp_repo": "${{ inputs.llamacpp_repo }}",
             "llamacpp_version": "${{ needs.init.outputs.llamacpp_version }}",
@@ -692,9 +684,9 @@ def generate_jobs(configure_presets):
         llama = [p["name"] for p in group_presets if not is_probe(p)]
         needs = ["init"]
         if probes:
-            jobs[f"{group}-probe"] = make_job(uses, backend, probes, ["init"])
+            jobs[f"{group}-probe"] = make_job(uses, probes, ["init"])
             needs.append(f"{group}-probe")
-        jobs[group] = make_job(uses, backend, llama, needs)
+        jobs[group] = make_job(uses, llama, needs)
         test_needs.append(group)
 
     return jobs, test_needs

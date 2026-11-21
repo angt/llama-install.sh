@@ -32,11 +32,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Setup Zig and Vulkan
-        run: |
-          python scripts/install-zig.py
-          python scripts/install-vulkan.py
-
       - name: Setup Java
         if: ${{ contains(inputs.preset, '-windows-') }}
         uses: actions/setup-java@v6

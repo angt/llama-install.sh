@@ -589,13 +589,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - preset: aarch64-linux-cuda-probe
-            cuda_code: '129'
+        preset:
+          - aarch64-linux-cuda-probe
     uses: ./.github/workflows/build-any-linux-cuda.yml
     with:
       preset: ${{ matrix.preset }}
-      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
@@ -610,27 +608,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - preset: aarch64-linux-cuda-75
-            cuda_code: '128'
-          - preset: aarch64-linux-cuda-80
-            cuda_code: '128'
-          - preset: aarch64-linux-cuda-86
-            cuda_code: '128'
-          - preset: aarch64-linux-cuda-89
-            cuda_code: '128'
-          - preset: aarch64-linux-cuda-90
-            cuda_code: '128'
-          - preset: aarch64-linux-cuda-100
-            cuda_code: '128'
-          - preset: aarch64-linux-cuda-120
-            cuda_code: '128'
-          - preset: aarch64-linux-cuda-121
-            cuda_code: '129'
+        preset:
+          - aarch64-linux-cuda-75
+          - aarch64-linux-cuda-80
+          - aarch64-linux-cuda-86
+          - aarch64-linux-cuda-89
+          - aarch64-linux-cuda-90
+          - aarch64-linux-cuda-100
+          - aarch64-linux-cuda-120
+          - aarch64-linux-cuda-121
     uses: ./.github/workflows/build-any-linux-cuda.yml
     with:
       preset: ${{ matrix.preset }}
-      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
@@ -644,13 +633,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - preset: x86_64-linux-cuda-probe
-            cuda_code: '129'
+        preset:
+          - x86_64-linux-cuda-probe
     uses: ./.github/workflows/build-any-linux-cuda.yml
     with:
       preset: ${{ matrix.preset }}
-      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
@@ -665,27 +652,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - preset: x86_64-linux-cuda-75
-            cuda_code: '128'
-          - preset: x86_64-linux-cuda-80
-            cuda_code: '128'
-          - preset: x86_64-linux-cuda-86
-            cuda_code: '128'
-          - preset: x86_64-linux-cuda-89
-            cuda_code: '128'
-          - preset: x86_64-linux-cuda-90
-            cuda_code: '128'
-          - preset: x86_64-linux-cuda-100
-            cuda_code: '128'
-          - preset: x86_64-linux-cuda-120
-            cuda_code: '128'
-          - preset: x86_64-linux-cuda-121
-            cuda_code: '129'
+        preset:
+          - x86_64-linux-cuda-75
+          - x86_64-linux-cuda-80
+          - x86_64-linux-cuda-86
+          - x86_64-linux-cuda-89
+          - x86_64-linux-cuda-90
+          - x86_64-linux-cuda-100
+          - x86_64-linux-cuda-120
+          - x86_64-linux-cuda-121
     uses: ./.github/workflows/build-any-linux-cuda.yml
     with:
       preset: ${{ matrix.preset }}
-      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
@@ -699,13 +677,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - preset: aarch64-windows-cuda-probe
-            cuda_code: '134'
+        preset:
+          - aarch64-windows-cuda-probe
     uses: ./.github/workflows/build-any-windows-cuda.yml
     with:
       preset: ${{ matrix.preset }}
-      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
@@ -720,13 +696,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - preset: aarch64-windows-cuda-13-121
-            cuda_code: '134'
+        preset:
+          - aarch64-windows-cuda-13-121
     uses: ./.github/workflows/build-any-windows-cuda.yml
     with:
       preset: ${{ matrix.preset }}
-      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
@@ -740,13 +714,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - preset: x86_64-windows-cuda-probe
-            cuda_code: '129'
+        preset:
+          - x86_64-windows-cuda-probe
     uses: ./.github/workflows/build-any-windows-cuda.yml
     with:
       preset: ${{ matrix.preset }}
-      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}
@@ -761,43 +733,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - preset: x86_64-windows-cuda-12-75
-            cuda_code: '128'
-          - preset: x86_64-windows-cuda-12-80
-            cuda_code: '128'
-          - preset: x86_64-windows-cuda-12-86
-            cuda_code: '128'
-          - preset: x86_64-windows-cuda-12-89
-            cuda_code: '128'
-          - preset: x86_64-windows-cuda-12-90
-            cuda_code: '128'
-          - preset: x86_64-windows-cuda-12-100
-            cuda_code: '128'
-          - preset: x86_64-windows-cuda-12-120
-            cuda_code: '128'
-          - preset: x86_64-windows-cuda-12-121
-            cuda_code: '129'
-          - preset: x86_64-windows-cuda-13-75
-            cuda_code: '130'
-          - preset: x86_64-windows-cuda-13-80
-            cuda_code: '130'
-          - preset: x86_64-windows-cuda-13-86
-            cuda_code: '130'
-          - preset: x86_64-windows-cuda-13-89
-            cuda_code: '130'
-          - preset: x86_64-windows-cuda-13-90
-            cuda_code: '130'
-          - preset: x86_64-windows-cuda-13-100
-            cuda_code: '130'
-          - preset: x86_64-windows-cuda-13-120
-            cuda_code: '130'
-          - preset: x86_64-windows-cuda-13-121
-            cuda_code: '130'
+        preset:
+          - x86_64-windows-cuda-12-75
+          - x86_64-windows-cuda-12-80
+          - x86_64-windows-cuda-12-86
+          - x86_64-windows-cuda-12-89
+          - x86_64-windows-cuda-12-90
+          - x86_64-windows-cuda-12-100
+          - x86_64-windows-cuda-12-120
+          - x86_64-windows-cuda-12-121
+          - x86_64-windows-cuda-13-75
+          - x86_64-windows-cuda-13-80
+          - x86_64-windows-cuda-13-86
+          - x86_64-windows-cuda-13-89
+          - x86_64-windows-cuda-13-90
+          - x86_64-windows-cuda-13-100
+          - x86_64-windows-cuda-13-120
+          - x86_64-windows-cuda-13-121
     uses: ./.github/workflows/build-any-windows-cuda.yml
     with:
       preset: ${{ matrix.preset }}
-      cuda_code: ${{ matrix.cuda_code }}
       deploy: true
       llamacpp_repo: ${{ inputs.llamacpp_repo }}
       llamacpp_version: ${{ needs.init.outputs.llamacpp_version }}

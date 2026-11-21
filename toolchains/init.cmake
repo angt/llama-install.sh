@@ -1,5 +1,42 @@
 list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES LLAMA_INSTALL_OS LLAMA_INSTALL_ARCH)
 
+if(LLAMA_INSTALL_BACKEND)
+    get_property(LLAMA_INSTALL_RUNNING GLOBAL PROPERTY "LLAMA_INSTALL_${LLAMA_INSTALL_BACKEND}_RUNNING" SET)
+    if(NOT LLAMA_INSTALL_RUNNING)
+        set(LLAMA_INSTALL_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
+        set(LLAMA_INSTALL_SCRIPT "${LLAMA_INSTALL_ROOT}/scripts/install/${LLAMA_INSTALL_BACKEND}.py")
+        set(LLAMA_INSTALL_ENV_FILE "${CMAKE_BINARY_DIR}/llama-install-${LLAMA_INSTALL_BACKEND}.env")
+
+        if(EXISTS "${LLAMA_INSTALL_SCRIPT}")
+            find_program(LLAMA_INSTALL_PYTHON NAMES python3 python REQUIRED)
+            file(REMOVE "${LLAMA_INSTALL_ENV_FILE}")
+            execute_process(
+                COMMAND "${CMAKE_COMMAND}" -E env
+                    "LLAMA_INSTALL_ENV_FILE=${LLAMA_INSTALL_ENV_FILE}"
+                    "LLAMA_INSTALL_DEVICE=${LLAMA_INSTALL_DEVICE}"
+                    "${LLAMA_INSTALL_PYTHON}" "${LLAMA_INSTALL_SCRIPT}"
+                    "${LLAMA_INSTALL_ARCH}" "${LLAMA_INSTALL_OS}" "${LLAMA_INSTALL_VERSION}"
+                WORKING_DIRECTORY "${LLAMA_INSTALL_ROOT}"
+                COMMAND_ERROR_IS_FATAL ANY
+            )
+        endif()
+        set_property(GLOBAL PROPERTY "LLAMA_INSTALL_${LLAMA_INSTALL_BACKEND}_RUNNING" TRUE)
+    endif()
+
+    # Installers can export toolchain variables such as ROCM_PATH as KEY=VALUE lines.
+    if(EXISTS "${LLAMA_INSTALL_ENV_FILE}")
+        file(STRINGS "${LLAMA_INSTALL_ENV_FILE}" LLAMA_INSTALL_EXPORTS)
+        foreach(LLAMA_INSTALL_EXPORT IN LISTS LLAMA_INSTALL_EXPORTS)
+            if(NOT LLAMA_INSTALL_EXPORT MATCHES "^([A-Za-z_][A-Za-z0-9_]*)=(.*)$")
+                message(FATAL_ERROR "Invalid installer export: ${LLAMA_INSTALL_EXPORT}")
+            endif()
+            set("${CMAKE_MATCH_1}" "${CMAKE_MATCH_2}")
+            set(ENV{${CMAKE_MATCH_1}} "${CMAKE_MATCH_2}")
+            list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES "${CMAKE_MATCH_1}")
+        endforeach()
+    endif()
+endif()
+
 if(LLAMA_INSTALL_OS STREQUAL "linux")
     set(CMAKE_SYSTEM_NAME "Linux")
 elseif(LLAMA_INSTALL_OS STREQUAL "windows")

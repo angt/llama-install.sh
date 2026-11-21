@@ -1,3 +1,4 @@
+import os
 import platform
 import shutil
 import subprocess
@@ -8,18 +9,19 @@ import time
 import zipfile
 from functools import wraps
 from pathlib import Path
-from urllib.request import urlopen, Request
+from urllib.request import Request, urlopen
 
-from versions import VULKAN_VERSION as VERSION
+from common import ROOT as REPO_ROOT, finish_install, is_current, run_installer
+from versions import VULKAN_VERSION as DEFAULT_VERSION
 
-ROOT = Path.cwd() / "deps" / "vulkan"
+ROOT = REPO_ROOT / "deps" / "vulkan"
 DEST = ROOT.with_suffix(".tmp")
-
 URL = "https://sdk.lunarg.com/sdk/download"
+VERSION = DEFAULT_VERSION
 
-# everything the build needs from the SDK is the headers, the glslc
-# compiler and the libs it depends on
+# Headers, glslc, and the libraries glslc depends on are enough to build.
 KEEP = ("bin", "include", "lib")
+
 
 def retry(func):
     @wraps(func)
@@ -33,6 +35,7 @@ def retry(func):
                 time.sleep(10)
     return wrapper
 
+
 def detect_arch():
     machine = platform.machine().lower()
     if machine in ("x86_64", "amd64"):
@@ -41,9 +44,11 @@ def detect_arch():
         return "aarch64"
     return machine
 
+
 def detect_os():
     system = platform.system().lower()
     return {"darwin": "macos"}.get(system, system)
+
 
 @retry
 def install(file):
@@ -51,75 +56,75 @@ def install(file):
 
     def members(tar):
         for member in tar:
-            # skip the version/arch dirs at the top of the archive
-            # (e.g. 1.4.357.1/x86_64/include/... -> include/...)
+            # Skip the version/arch directories at the top of the archive.
             parts = Path(member.name).parts
             if len(parts) > 3 and parts[2] in KEEP:
                 member.name = str(Path(*parts[2:]))
                 yield member
 
-    with urlopen(req, timeout=300) as r, tarfile.open(fileobj=r, mode="r|*") as tar:
+    with urlopen(req, timeout=300) as response, tarfile.open(fileobj=response, mode="r|*") as tar:
         tar.extractall(DEST, members=members(tar), filter="tar")
 
-# the macOS SDK is a zip wrapping a Qt Installer Framework app, which
-# installs rootlessly (no sudo) - we drive it headless into a temp dir,
-# then lift the payload out of its macOS/ wrapper to match the linux
-# layout (deps/vulkan/{bin,include,lib})
+
 @retry
 def install_mac():
+    # The macOS zip wraps a Qt installer. Drive it headlessly and lift the
+    # payload out of macOS/ to match the Linux SDK layout.
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
         archive = tmp / "vulkansdk.zip"
         req = Request(f"{URL}/{VERSION}/mac/vulkansdk-macos-{VERSION}.zip",
                       headers={"User-Agent": "curl/8.0"})
-        with urlopen(req, timeout=600) as r, open(archive, "wb") as f:
-            shutil.copyfileobj(r, f)
-        with zipfile.ZipFile(archive) as z:
-            z.extractall(tmp)
+        with urlopen(req, timeout=600) as response, open(archive, "wb") as file:
+            shutil.copyfileobj(response, file)
+        with zipfile.ZipFile(archive) as archive_zip:
+            archive_zip.extractall(tmp)
         app = next(tmp.glob("*.app"))
         exe = next((app / "Contents" / "MacOS").iterdir())
         exe.chmod(0o755)
-        # the installer needs an empty install root of its own (it backs
-        # up its operations), so keep it away from the extracted app/zip
         root = tmp / "root"
-        # only the core component (headers, loader, tools) - skip
-        # com.lunarg.vulkan.usr ("System Global Installation"),
-        # which drops vkcube.app in /Applications and a MoltenVK ICD
-        # into /usr/local/lib
         subprocess.run([exe, "in", "--root", root, "-c", "--al", "--da",
                         "com.lunarg.vulkan.core"], check=True)
         for name in KEEP:
             shutil.move(root / "macOS" / name, DEST / name)
 
+
 def main():
-    arch = sys.argv[1] if len(sys.argv) >= 2 else detect_arch()
-    osname = detect_os()
+    global VERSION
 
-    if osname not in ("linux", "macos"):
-        sys.exit(f"Vulkan builds are only supported on linux/macos (got '{osname}')")
-    if osname == "linux" and arch != "x86_64":
-        sys.exit(f"LunarG only publishes x86_64 {osname} SDKs (got '{arch}')")
+    env = os.environ.copy()
+    if len(sys.argv) >= 4 and sys.argv[3]:
+        env["ZIG_VERSION"] = sys.argv[3]
+    run_installer("zig", env=env)
+    requested = sys.argv[3] if len(sys.argv) >= 4 and sys.argv[3] else None
+    VERSION = requested or os.getenv("VULKAN_VERSION", DEFAULT_VERSION)
+    arch = detect_arch()
+    os_name = detect_os()
 
-    if (ROOT / "include/vulkan/vulkan.h").exists():
+    if os_name not in ("linux", "macos"):
+        sys.exit(f"Vulkan builds are only supported on linux/macos hosts (got '{os_name}')")
+    if os_name == "linux" and arch != "x86_64":
+        sys.exit(f"LunarG only publishes x86_64 {os_name} SDKs (got '{arch}')")
+
+    signature = f"{VERSION}|{arch}|{os_name}"
+    if is_current(ROOT, signature, "include/vulkan/vulkan.h"):
         print(f" - Vulkan SDK {VERSION} found in {ROOT}")
         return
 
-    print(f"Installing Vulkan SDK {VERSION} ({arch}/{osname})...")
-    shutil.rmtree(ROOT, ignore_errors=True)
+    print(f"Installing Vulkan SDK {VERSION} ({arch}/{os_name})...")
     shutil.rmtree(DEST, ignore_errors=True)
     DEST.mkdir(parents=True)
 
-    if osname == "macos":
+    if os_name == "macos":
         install_mac()
     else:
         install(f"vulkansdk-linux-{arch}-{VERSION}")
 
-    DEST.rename(ROOT)
+    if not (DEST / "include/vulkan/vulkan.h").exists():
+        sys.exit("Installer finished but headers are missing - SDK layout changed?")
+    finish_install(DEST, ROOT, signature)
+    print(f" - Vulkan SDK {VERSION} ({arch}/{os_name})")
 
-    if not (ROOT / "include/vulkan/vulkan.h").exists():
-        sys.exit("installer finished but headers are missing - SDK layout changed?")
-
-    print(f" - Vulkan SDK {VERSION} ({arch}/{osname})")
 
 if __name__ == "__main__":
     main()
