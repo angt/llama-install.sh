@@ -378,7 +378,7 @@ def generate_linux_cuda_presets(arch):
         cache = {
             "GGML_CUDA": "ON",
             "GGML_STATIC": "ON",
-            "LLAMA_INSTALL_VERSION": cuda_build_code(None, arch, "linux", cuda_arch),
+            "LLAMA_INSTALL_BACKEND_VERSION": cuda_build_code(None, arch, "linux", cuda_arch),
             "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
             "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
             "CMAKE_CUDA_FLAGS": f"-isystem ${{sourceDir}}/deps/cuda/include",
@@ -401,7 +401,7 @@ def generate_linux_cuda_probe_preset(arch):
         "LLAMA_INSTALL_PROBE": "cuda",
         "LLAMA_INSTALL_PROBE_ARCHS": ",".join(CUDA_ARCHS),
         "LLAMA_INSTALL_PROBE_VERSIONS": ",".join(CUDA_ARCHS.values()),
-        "LLAMA_INSTALL_VERSION": cuda_build_code(None, arch, "linux"),
+        "LLAMA_INSTALL_BACKEND_VERSION": cuda_build_code(None, arch, "linux"),
         "CMAKE_CUDA_ARCHITECTURES": ";".join(CUDA_ARCHS), # useless
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc",
         "CMAKE_CUDA_FLAGS": "-isystem ${sourceDir}/deps/cuda/include",
@@ -437,7 +437,7 @@ def generate_windows_cuda_presets(arch):
             cache = {
                 "GGML_CUDA": "ON",
                 "GGML_STATIC": "ON",
-                "LLAMA_INSTALL_VERSION": cuda_build_code(major, arch, "windows", cuda_arch),
+                "LLAMA_INSTALL_BACKEND_VERSION": cuda_build_code(major, arch, "windows", cuda_arch),
                 "CMAKE_CUDA_ARCHITECTURES": cuda_arch if cuda_arch == last_arch else f"{cuda_arch}-real",
                 "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
                 "CMAKE_CUDA_FLAGS": f"-diag-suppress 221 -isystem ${{sourceDir}}/deps/cuda/include",
@@ -460,7 +460,7 @@ def generate_windows_cuda_probe_preset(arch):
         "LLAMA_INSTALL_PROBE": "cuda",
         "LLAMA_INSTALL_PROBE_ARCHS": ",".join(CUDA_ARCHS),
         "LLAMA_INSTALL_PROBE_VERSIONS": ",".join(CUDA_ARCHS.values()),
-        "LLAMA_INSTALL_VERSION": cuda_build_code(None, arch, "windows"),
+        "LLAMA_INSTALL_BACKEND_VERSION": cuda_build_code(None, arch, "windows"),
         "CMAKE_CUDA_ARCHITECTURES": ";".join(CUDA_ARCHS), # useless
         "CMAKE_CUDA_COMPILER": "${sourceDir}/deps/cuda/bin/nvcc.exe",
         "CMAKE_CUDA_FLAGS": "-diag-suppress 221 -isystem ${sourceDir}/deps/cuda/include",
@@ -643,7 +643,7 @@ def cuda_codes():
     codes = set(CUDA_ARCHS.values())
     for configure, _, _ in generate_cuda_presets():
         for preset in configure:
-            codes.add(preset["cacheVariables"]["LLAMA_INSTALL_VERSION"])
+            codes.add(preset["cacheVariables"]["LLAMA_INSTALL_BACKEND_VERSION"])
     return codes
 
 def make_job(uses, presets, needs):
